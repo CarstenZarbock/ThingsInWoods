@@ -225,92 +225,6 @@ public:
 
 	public:
 
-	/* Stamina */
-		int GetStamina() { return iStamina; }
-		int SetStamina( int iNewStamina) { iStamina = iNewStamina; return iStamina; }
-		int GetMaxStamina() { return iStaminaMax; }
-		int SetMaxStamina( int iNewMaxStamina) { iStaminaMax = iNewMaxStamina; return iStaminaMax; }
-		float GetNextStaminaHitTime() { return fNextStaminaHitTime; }
-		float SetNextStaminaHitTime( float fNewNextStaminaHitTime ) { fNextStaminaHitTime = fNewNextStaminaHitTime; return fNextStaminaHitTime; }
-		float GetStaminaHitTime() { return fStaminaHitTime; }
-		float SetStaminaHitTime( float fNewStaminaHitTime ) { fStaminaHitTime = fNewStaminaHitTime; return fStaminaHitTime; }
-		float GetStaminaGainTime() { return fStaminaGainTime; }
-		float SetStaminaGainTime( float fNewStaminaGainTime ) { fStaminaGainTime = fNewStaminaGainTime; return fStaminaGainTime; }
-		float GetStaminaGainFactor() { return fStaminaGainFactor; }
-		float SetStaminaGainFactor( float fNewStaminaGainFactor ) { fStaminaGainFactor = fNewStaminaGainFactor; return fStaminaGainFactor; }
-		float GetStaminaReducementFactor() { return fStaminaReducementFactor; }
-		float SetStaminaReducementFactor( float fNewStaminaReducementFactor ) { fStaminaReducementFactor = fNewStaminaReducementFactor; return fStaminaReducementFactor; }
-
-	/* Health */
-		float GetHealth() { return fHealth; }
-		float SetHealth(float fNewHealth) { fHealth = fNewHealth; return fHealth; }
-		float GetMaxHealth() { return fHealthMax; }
-		float SetMaxHealth(float fNewMaxHealth ) { fHealthMax = fNewMaxHealth; return fHealthMax; }
-		bool GetIsAlive() { return bIsAlive; }
-		bool SetIsAlive(bool bNewIsAlive) { bIsAlive = bNewIsAlive; return bIsAlive; }
-
-	/* Movement */
-		bool GetIsRunning() { return bIsRunning; }
-		bool SetIsRunning(bool bNewIsRunning) { bIsRunning = bNewIsRunning; return bIsRunning; }
-		float GetMinimumStaminaToRun() { return fMinimumStaminaToRun; }
-		float SetMinimumStaminaToRun(float fNewMinimumStaminaToRun) { fMinimumStaminaToRun = fNewMinimumStaminaToRun; return fMinimumStaminaToRun; }
-	
-	/* Walkspeed */
-		float GetMaxWalkSpeed() { return fMaxWalkSpeed; }
-		float SetMaxWalkSpeed(float fNewMaxWalkSpeed) { fMaxWalkSpeed = fNewMaxWalkSpeed; return fMaxWalkSpeed; }
-		float GetMaxWalkSpeedRunning() { return fMaxWalkSpeedRunning; }
-		float SetMaxWalkSpeedRunning(float fNewMaxWalkSpeedRunning) { fMaxWalkSpeedRunning = fNewMaxWalkSpeedRunning; return fMaxWalkSpeedRunning; }
-		float GetMaxWalkSpeedInjured() { return fMaxWalkSpeedInjured; }
-		float SetMaxWalkSpeedInjured(float fNewMaxWalkSpeedInjured) { fMaxWalkSpeedInjured = fNewMaxWalkSpeedInjured; return fMaxWalkSpeed; }
-		float GetMaxWalkSpeedRunningInjured() { return fMaxWalkSpeedRunningInjured; }
-		float SetMaxWalkSpeedRunningInjured(float fNewMaxWalkSpeedRunningInjured) { fMaxWalkSpeedRunningInjured = fNewMaxWalkSpeedRunningInjured; return fMaxWalkSpeedRunningInjured; }
-
-	/* Item Usage */
-		bool GetIsUsingItem() { return bIsUsingItem; }
-		bool SetIsUsingItem(bool bNewIsUsingItem) { bIsUsingItem = bNewIsUsingItem; return bIsUsingItem; }
-		bool GetIsUsingPrimary() { return bIsUsingPrimary; }
-		bool SetIsUsingPrimary(bool bNewIsUsingPrimary) { bIsUsingPrimary = bNewIsUsingPrimary; return bIsUsingPrimary; }
-		bool GetIsUsingOverTime() { return bIsUsingOverTime; }
-		bool SetIsUsingOverTime(bool bNewIsUsingOverTime) { bIsUsingOverTime = bNewIsUsingOverTime; return bIsUsingOverTime; }
-		float GetUsingPercentage() { return fUsingPercentage; }
-		float SetUsingPercentage(float fNewUsingPercentage) { fUsingPercentage = fNewUsingPercentage; return fUsingPercentage; }
-		AThingsInWoodsCharacter* GetActionTarget() { return AActionTarget; }
-		AThingsInWoodsCharacter* SetActionTarget(AThingsInWoodsCharacter* ANewActionTarget) { AActionTarget = ANewActionTarget; return AActionTarget; }
-
-	/* Blackout */
-		bool GetIsBlackout() { return bIsBlackout; }
-		bool SetIsBlackout(bool bNewIsBlackout) { bIsBlackout = bNewIsBlackout; return bIsBlackout; }
-		float GetBlackoutPercentage() { return fBlackoutPercentage; }
-		float SetBlackoutPercentage(float fNewBlackoutPercentage) { fBlackoutPercentage = fNewBlackoutPercentage; return fBlackoutPercentage; }
-		float GetBlackoutFactor() { return fBlackoutFactor; }
-		float SetBlackoutFactor(float fNewBlackoutFactor) { fBlackoutFactor = fNewBlackoutFactor; return fBlackoutFactor; }
-		float GetBlackoutHitTimeInSeconds() { return fBlackoutHitTimeInSeconds; }
-		float SetBlackoutHitTimeInSeconds(float fNewBlackoutHitTimeInSeconds) { fBlackoutHitTimeInSeconds = fNewBlackoutHitTimeInSeconds; return fBlackoutHitTimeInSeconds; }
-		float GetBlackoutNextHitTime() { return fBlackoutNextHitTime; }
-		float SetBlackoutNextHitTime(float fNewBlackoutNextHitTime) { fBlackoutNextHitTime = fNewBlackoutNextHitTime; return fBlackoutNextHitTime; }
-
-	/* Game Mode Slenderman */
-		float GetScareFactorReduce() { return fScareFactorReduce; }
-		float SetScareFactorReduce(float fNewScareFactorReduce) { fScareFactorReduce = fNewScareFactorReduce; return fScareFactorReduce; }
-		float GetScare() { return fScare_Current; }
-		float SetScare(float fNewScare) { fScare_Current = fNewScare; return fScare_Current; }
-		float GetMaxScare() { return fScare_Max; }
-		float SetMaxScare(float fNewMaxScare) { fScare_Max = fNewMaxScare; return fScare_Max; }
-		float GetNextScarePostProcessUpdateTime() { return fNextScarePostProcessUpdateTime; }
-		float SetNextScarePostProcessUpdateTime(float fNewNextScarePostProcessUpdateTime) { fNextScarePostProcessUpdateTime = fNewNextScarePostProcessUpdateTime; return fNextScarePostProcessUpdateTime; }
-
-	/* inventory */
-		int GetInventorySelectedObject() { return iInventorySelectedObject; }
-		int SetInventorySelectedObject(int iNewInventorySelectedObject) { iInventorySelectedObject = iNewInventorySelectedObject; return iInventorySelectedObject; }
-		EAnimationType GetCurrentAnimationType() { return ECurrentAnimationType; }
-		EAnimationType SetCurrentAnimationType(EAnimationType ENewAnimationType) { ECurrentAnimationType = ENewAnimationType; return ECurrentAnimationType; }
-		float GetPickupDistance() { return fPickupDistance; }
-		float SetPickupDistance(float fNewPickupDistance) { fPickupDistance = fNewPickupDistance; return fPickupDistance; }
-
-	/* Audio */
-		FGroundSoundsMaterials* GetGroundSounds() { return &FSounds_Ground; }
-		FGroundSounds* AThingsInWoodsCharacter::GetGroundSoundStack(EPhysicalSurface PhysSurface);
-
 	//------------------------------------------------------------------------
 	// Movement
 	//------------------------------------------------------------------------
@@ -569,10 +483,7 @@ public:
 		void Multi_ItemUsageHandle();
 	virtual bool Multi_ItemUsageHandle_Validate();
 	virtual void Multi_ItemUsageHandle_Implementation();
-	//----------------------- REDONE END ----------------------
-	//----------------------- REDONE END ----------------------
-	//----------------------- REDONE END ----------------------
-	//----------------------- REDONE END ----------------------
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UTexture2D* HUDIcon;
 	void AddItemToInventory(int iInventorySlot, ABaseItem* Object);

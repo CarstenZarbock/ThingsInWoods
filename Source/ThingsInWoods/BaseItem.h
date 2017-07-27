@@ -52,14 +52,6 @@ private:
 		float fTimeFactor;
 public:
 	FUsage() { /* be sure to set in default */ }
-	EUsageTarget GetTargetType() { return ETargetType; }
-	EUsageTarget SetTargetType(EUsageTarget ENewTargetType) { ETargetType = ENewTargetType; return ETargetType; }
-	float GetMaximumTargetDistance() { return fTargetDistanceMax; }
-	float SetMaximumTargetDistance(float fNewTargetDistance) { fTargetDistanceMax = fNewTargetDistance; return fTargetDistanceMax; }
-	bool GetIsOverTime() { return bIsOverTime; }
-	bool SetIsOverTime(bool bNewIsOverTime) { bIsOverTime = bNewIsOverTime; return bIsOverTime; }
-	float GetTimeFactor() { return fTimeFactor; }
-	float SetTImeFactor(float fNewTimeFactor) { fTimeFactor = fNewTimeFactor; return fTimeFactor; }
 };
 
 
@@ -88,26 +80,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		FUsage FSecondarySkill;
 
-	bool GetIsStackable() { return bIsStackable; }
-	bool SetIsStackable(bool bNewIsStackable) { bIsStackable = bNewIsStackable; return bIsStackable; }
-	int GetStackSize() { return iStackSize; }
-	int SetStackSize(int iNewStackSize) { iStackSize = iNewStackSize; return iStackSize; }
-	FString GetItemName() { return FItemName; }
-	FString SetItemName(FString FNewItemName) { FItemName = FNewItemName; return FItemName; }
-	EAnimationType GetAnimationType() { return EAnimationTypeCurrent; }
-	EAnimationType SetAnimationType(EAnimationType ENewAnimationType) { EAnimationTypeCurrent = ENewAnimationType; return EAnimationTypeCurrent; }
-	FUsage* GetPrimarySkill() { return &FPrimarySkill; }
-	FUsage* SetPrimarySkill(FUsage FNewPrimarySkill) { FPrimarySkill = FNewPrimarySkill; return &FPrimarySkill; }
-	FUsage* GetSecondarySkill() { return &FSecondarySkill; }
-	FUsage* SetSecondarySkill(FUsage FNewSecondarySkill) { FSecondarySkill = FNewSecondarySkill; return &FSecondarySkill; }
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UTexture2D* InventoryIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		EItemType ItemType;
 
 	float currentUsageProgression; //0.0f - 100.0f
-	float GetUsageProgression() { return currentUsageProgression; };
 	float NextUsageHitTime;
 
 	bool isCurrentlyUsed;

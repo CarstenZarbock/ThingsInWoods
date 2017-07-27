@@ -33,11 +33,6 @@ protected:
 		AThingsInWoodsSpectator* ASpectatorPawnOR;
 
 public:
-	AThingsInWoodsCharacter* SetPlayerPawn(AThingsInWoodsCharacter* ANewPlayerPawn) { APlayerPawn = ANewPlayerPawn; return APlayerPawn; }
-	AThingsInWoodsCharacter* GetPlayerPawn() { return APlayerPawn; }
-	AThingsInWoodsSpectator* SetSpectatorPawn(AThingsInWoodsSpectator* ANewSpectatorPawn) { ASpectatorPawnOR = ANewSpectatorPawn; return ASpectatorPawnOR; }
-	AThingsInWoodsSpectator* GetSpectatorPawn() { return ASpectatorPawnOR; }
-
 		/* Input */
 		void Jump();
 		void StopJump();

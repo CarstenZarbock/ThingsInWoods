@@ -29,8 +29,5 @@ public:
 	void AttachToPlayerPawn(APawn* Pawn);
 	APawn* GetNextPlayer();
 	
-	APawn* GetAttachedPawn() { return AAttachedPawn; }
-	APawn* SetAttachedPawn(APawn* ANewAttachedPawn) { AAttachedPawn = ANewAttachedPawn; return AAttachedPawn; }
-
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 };
