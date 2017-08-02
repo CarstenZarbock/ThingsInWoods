@@ -15,11 +15,17 @@ class THINGSINWOODS_API AMonitorCamera : public ABaseItem
 
 	AMonitorCamera();
 	void BeginPlay() override;
+private:
+protected:
 
 public:
+	/** */
 	TArray<ABaseItem*> ActiveCameras;
+
+	/** */
 	UTexture2D* CurrentCamTexture;
 
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Materials)
 		UMaterial* CameraOfflineMaterial;
 
@@ -29,10 +35,18 @@ public:
 	void DisableObject() override;
 	void UseObject() override;
 
+	/** */
 	void RegisterCamera(ABaseItem* CameraActor);
+
+	/** */
 	void UnRegisterCamera(ABaseItem* CameraActor);
+
+	/** */
 	void ActivateCamera(int index);
+
+	/** */
 	void SwitchCamera();
 
+	/** */
 	int ActiveCameraIndex;
 };

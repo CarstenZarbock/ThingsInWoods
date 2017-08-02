@@ -9,6 +9,7 @@
  * 
  */
 
+ /** */
 UENUM(BlueprintType)
 enum class EGameType : uint8
 {
@@ -24,11 +25,15 @@ class THINGSINWOODS_API AThingsInWoodsGameState : public AGameStateBase
 public:
 	AThingsInWoodsGameState();
 
-	//Slenderman
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int Current_Found_Targets;
+
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int Max_Found_Targets;
+
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EGameType Current_GameType;
 };

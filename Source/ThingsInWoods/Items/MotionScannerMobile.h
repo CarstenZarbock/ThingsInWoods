@@ -16,6 +16,8 @@ class THINGSINWOODS_API AMotionScannerMobile : public ABaseItem
 
 		AMotionScannerMobile();
 	void BeginPlay() override;
+private:
+protected:
 
 public:
 	//------------------------------------------------------------------------
@@ -28,34 +30,54 @@ public:
 		class USoundBase* Beep;
 	//------------------------------------------------------------------------
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterial* ScannerOfflineMaterial;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterialInstanceDynamic* ScannerMaterialInstance;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterial* ScannerMaterial;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UCanvasRenderTarget2D* ScannerCanvas;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UTexture2D* DotTexture;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int ScannerMaterialElementIndex;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float ScanTime;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float NextScanHitTime;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float ScanDistance;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	bool isScanning;
+		bool isScanning;
+
+	/** */
 	TArray<AActor*> Scan();
 	
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Misc)
-	TArray<AActor*> ActiveScanActors;
+		TArray<AActor*> ActiveScanActors;
 
+	/** */
 	void DrawRadar();
 	void CustomTick() override;
 	void execPrimary() override;

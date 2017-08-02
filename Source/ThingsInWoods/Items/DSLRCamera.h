@@ -13,25 +13,33 @@ class THINGSINWOODS_API ADSLRCamera : public ABaseItem
 {
 	GENERATED_BODY()
 
-		ADSLRCamera();
-	void BeginPlay() override;
+private:
 
 public:
+	ADSLRCamera();
+	void BeginPlay() override;
+
+	/** */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USpotLightComponent* FlashLight;
 
+	/** */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USceneCaptureComponent2D* SceneCapture;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UTextureRenderTarget2D* RenderTarget;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterialInstanceDynamic* CameraMaterialInstance;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterial* CameraMaterial;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int DisplayMaterialElementIndex;
 
@@ -45,19 +53,28 @@ public:
 		class USoundBase* Flash_Loading;
 	//------------------------------------------------------------------------
 
-
+	/** */
 	bool hasFlashed;
 
+	/** */
 	float ReloadTimer;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float ReloadTime;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float FlashTime;
+
+	/** */
 	float FlashTimer;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float FlashIntensity;
 
+	/** */
 	void HandleTargets();
 
 	void CustomTick() override;

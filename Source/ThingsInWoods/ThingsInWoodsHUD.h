@@ -12,6 +12,8 @@ class AThingsInWoodsHUD : public AHUD
 
 public:
 	AThingsInWoodsHUD();
+
+	/** */
 	AThingsInWoodsCharacter* PlayerPawn;
 
 	/** Primary draw call for the HUD */

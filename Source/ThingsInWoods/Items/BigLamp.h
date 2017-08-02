@@ -12,13 +12,16 @@ UCLASS()
 class THINGSINWOODS_API ABigLamp : public ABaseItem
 {
 	GENERATED_BODY()
-		UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+private:
+	/** */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USpotLightComponent* Spotlight;
 
+public:
 	ABigLamp();
 		void BeginPlay() override;
 
-public:
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Misc)
 		float Intensity;
 

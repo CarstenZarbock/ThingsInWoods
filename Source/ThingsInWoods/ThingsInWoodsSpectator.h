@@ -14,19 +14,28 @@ class THINGSINWOODS_API AThingsInWoodsSpectator : public ASpectatorPawn
 {
 	GENERATED_BODY()
 		
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringarmComponent;
-		/** First person camera */
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	
+	/** First person camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FirstPersonCameraComponent;
+private:
+
 protected:
+	/** */
 	APawn* AAttachedPawn;
 
 public: 
 	AThingsInWoodsSpectator();
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
+
+	/** */
 	void AttachToPlayerPawn(APawn* Pawn);
+
+	/** */
 	APawn* GetNextPlayer();
 	
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }

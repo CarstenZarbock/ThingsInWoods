@@ -13,8 +13,6 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
-//////////////////////////////////////////////////////////////////////////
-// AThingsInWoodsCharacter
 AThingsInWoodsCharacter::AThingsInWoodsCharacter()
 {
 	/* We setup the collision capsule */
@@ -80,9 +78,6 @@ AThingsInWoodsCharacter::AThingsInWoodsCharacter()
 	}
 }
 
-/* ------------------------------------------
-* Define the replicated variables
-*/
 void AThingsInWoodsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -103,12 +98,8 @@ void AThingsInWoodsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 	DOREPLIFETIME(AThingsInWoodsCharacter, Inventory);
 }
 
-/* ------------------------------------------
-* BeginPlay()
-*/
 void AThingsInWoodsCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 	
 	/* There's no skeleton created in the constructor, so it has to be attached here. */
@@ -120,21 +111,10 @@ void AThingsInWoodsCharacter::BeginPlay()
 	TP_Mesh_Inv4->AttachToComponent(this->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("RightShoulder"));
 	TP_Mesh_Inv5->AttachToComponent(this->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("LeftShoulder"));
 
-	/* We hide the hands mesh - because it's the default one */
-	if (Mesh1P->IsValidLowLevel())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, "VALID");
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, "INVALID");
-	}
+	/* We hide the hands mesh - as long as it's the default one */
 	//Mesh1P->SetHiddenInGame(true, false);
 
-	// Init some variables
 	this->SetInventorySelectedObject(-1);
-	
-	//--- Init the stats
 	this->SetHealth(this->GetMaxHealth());
 	this->SetIsAlive(true);
 	this->SetStamina(this->GetMaxStamina());
@@ -146,9 +126,6 @@ void AThingsInWoodsCharacter::BeginPlay()
 }
 
 
-/* ------------------------------------------
-* Tick Event
-*/
 void AThingsInWoodsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -158,23 +135,14 @@ void AThingsInWoodsCharacter::Tick(float DeltaTime)
 		this->BlackoutHandle();
 		this->ItemUsageHandle();
 		this->StaminaHandle();
-		//Slenderman
+
 		this->HandleScare(DeltaTime);
 	}
 }
 
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Movement related
-/* ------------------------------------------
-/* ------------------------------------------
-/* HandleUseInput
-* Executes on Use Input Key Pressed
-*/
 void AThingsInWoodsCharacter::HandleUseInput()
 {
-	/* only execute if the character is alive, is not in blackout mode and is able to move */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		//Re-initialize hit info
@@ -205,19 +173,12 @@ void AThingsInWoodsCharacter::HandleUseInput()
 	}
 }
 
-/* HandleMovement
-@Param FVector WorldDirection - WorldDirection Vector to move to
-@Param float Scale Value - Value to move (-1.0f to 1.0f)
-*/
 void AThingsInWoodsCharacter::HandleMovement(FVector WorldDirection, float ScaleValue)
 {
-	/* only execute if the character is alive, is not in blackout mode and is able to move */
 	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
 	{
-		/* Add the actual movement input */
 		this->AddMovementInput(WorldDirection, ScaleValue);
 
-		/* Play some Footstep Sounds */
 		if (this->GetMovementComponent()->IsMovingOnGround())
 		{
 			this->PlaySound_Steps();
@@ -225,42 +186,26 @@ void AThingsInWoodsCharacter::HandleMovement(FVector WorldDirection, float Scale
 	}
 }
 
-/* ------------------------------------------
-* HandleTurnRotation
-@Param float Rate Value - Value to Y rotate
-*/
 void AThingsInWoodsCharacter::HandleTurnRotation(float fRate)
 {
-	/* only execute if the character is alive, is not in blackout mode */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		this->AddControllerYawInput(fRate);
 	}
 }
 
-/* ------------------------------------------
-* HandleUpRotation
-@Param float Rate Value - Value to Y rotate
-*/
 void AThingsInWoodsCharacter::HandleUpRotation(float fRate)
 {
-	/* only execute if the character is alive, is not in blackout mode */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		this->AddControllerPitchInput(fRate);
 	}
 }
 
-/* ------------------------------------------
-* Landed
-@Param FHitResult &Hit - Hit result below the character
-*Gets fired whenever the character hits the ground - override function
-*/
 void AThingsInWoodsCharacter::Landed(const FHitResult & Hit)
 {
 	Super::Landed(Hit);
 
-	/* Get the physical material below character to select correct landed sound and play it */
 	FHitResult GroundHit = this->GetGroundHit();
 	if (GroundHit.bBlockingHit && GroundHit.PhysMaterial->IsValidLowLevel())
 	{
@@ -269,19 +214,12 @@ void AThingsInWoodsCharacter::Landed(const FHitResult & Hit)
 
 }
 
-/* ------------------------------------------
-* HandleJump
-* ACharacter::Jump() extension to add jump sounds
-*/
 void AThingsInWoodsCharacter::HandleJump()
 {
-	/* only execute if the character is alive, is not in blackout mode and is able to move */
 	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
 	{
-		/* Check if we're on the ground */
 		if (this->GetMovementComponent()->IsMovingOnGround())
 		{
-			/* Get the physical material below character to select correct landed sound and play it */
 			FHitResult GroundHit = this->GetGroundHit();
 
 			if (GroundHit.bBlockingHit && GroundHit.PhysMaterial->IsValidLowLevel())
@@ -289,32 +227,21 @@ void AThingsInWoodsCharacter::HandleJump()
 				this->PlaySound(this->GetSound_Jump(GroundHit.PhysMaterial->SurfaceType), this->FootAudioComponent, false);
 			}
 
-			/* execute the jump ACharacter::Jump() */
 			this->Jump();
 		}
 	}
 }
 
-/* ------------------------------------------
-* HandleStopJump
-* Gets executed on release of the Jump input key
-*/
 void AThingsInWoodsCharacter::HandleStopJump()
 {
-	/* only execute if the character is alive and is not in blackout mode */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		this->StopJumping();
 	}
 }
 
-/* ------------------------------------------
-* CanMove
-* Simple check if the character is able to move
-*/
 bool AThingsInWoodsCharacter::CanMove()
 {
-	/* not allowed to move while using an item (over time) */
 	if (this->GetIsUsingItem() && this->GetIsUsingOverTime())
 	{
 		return false;
@@ -323,25 +250,13 @@ bool AThingsInWoodsCharacter::CanMove()
 	return true;
 }
 
-/* ------------------------------------------
-* SetMaximumWalkSpeed
-@Param float fNewMaximumWalkSpeed
-*Applies the new maximum walkspeed to the character movement component
-*/
 void AThingsInWoodsCharacter::SetMaximumWalkSpeed(float fNewMaximumWalkSpeed)
 {
 	this->GetCharacterMovement()->MaxWalkSpeed = fNewMaximumWalkSpeed;
 }
 
-/* ------------------------------------------
-* execRunToggle
-@Param bool bNewIsRunning
-*Sets the new running state and applies new walk speed
-*Runs on executed client
-*/
 void AThingsInWoodsCharacter::execRunToggle(bool bNewIsRunning)
 {
-	/* if the character is running and our current stamina is more than the set min stamina to be able to run */
 	if (this->GetIsRunning() && this->GetStamina() >= this->GetMinimumStaminaToRun())
 	{
 		/* slow down if injured */
@@ -349,7 +264,7 @@ void AThingsInWoodsCharacter::execRunToggle(bool bNewIsRunning)
 		{
 			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeedRunningInjured());
 		}
-		else /* use normal speed if not injured */
+		else
 		{
 			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeedRunning());
 		}
@@ -371,11 +286,6 @@ void AThingsInWoodsCharacter::execRunToggle(bool bNewIsRunning)
 	}
 }
 
-/* ------------------------------------------
-* ToggleRun Clientside Validation & Implementation
-@Param bool bNewIsRunning
-* ---
-*/
 bool AThingsInWoodsCharacter::RunToggle_Validate(bool bNewIsRunning)
 {
 	return true;
@@ -383,7 +293,6 @@ bool AThingsInWoodsCharacter::RunToggle_Validate(bool bNewIsRunning)
 
 void AThingsInWoodsCharacter::RunToggle_Implementation(bool bNewIsRunning)
 {
-	/* only execute if the character is alive, is not in blackout mode and is able to move */
 	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
 	{
 		/* executes local */
@@ -397,11 +306,6 @@ void AThingsInWoodsCharacter::RunToggle_Implementation(bool bNewIsRunning)
 	}
 }
 
-/* ------------------------------------------
-* ToggleRun Serverside Validation & Implementation
-@Param bool bNewIsRunning
-* ---
-*/
 bool AThingsInWoodsCharacter::Server_RunToggle_Validate(bool bNewIsRunning)
 {
 	return true;
@@ -413,17 +317,11 @@ void AThingsInWoodsCharacter::Server_RunToggle_Implementation(bool bNewIsRunning
 	this->RunToggle(bNewIsRunning); //todo: Note: could end in endless loop, if: change to execRunToggle
 }
 
-/* ------------------------------------------
-* StaminaHandle
-* Handles the Stamina reducement and gain while running / walking
-* todo: based on Delta Time
-*/
 void AThingsInWoodsCharacter::StaminaHandle()
 {
-	/* time used so it's not checked every frame / tick */
+	/* replace time with delta time timer */
 	if (GetGameTimeSinceCreation() >= this->GetNextStaminaHitTime())
 	{
-		/* while running reduce stamina */
 		if (this->GetIsRunning())
 		{
 			if (this->SetStamina(this->GetStamina() - this->GetStaminaReducementFactor()) <= 0)
@@ -440,7 +338,6 @@ void AThingsInWoodsCharacter::StaminaHandle()
 		{
 			if (this->SetStamina(this->GetStamina() + this->GetStaminaGainFactor()) > this->GetMaxStamina())
 			{
-				/* Set Stamina to Max, incase the gain is more than MaxStamina */
 				this->SetStamina(this->GetMaxStamina());
 			}
 
@@ -450,19 +347,8 @@ void AThingsInWoodsCharacter::StaminaHandle()
 	}
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Audio related
-/* ------------------------------------------
-* execPlaySound
-*@Param USoundBase* Sound - Sound asset to play
-*@Param UAudioComponent* AudioComponent - AudioComponent of the Pawn to use as sound source
-*@Param bool ifAvailable - play sound only if audio component is not busy playing another sound
-* Plays sound asset clientside using a pawn audio component
-*/
 void AThingsInWoodsCharacter::execPlaySound(USoundBase* Sound, UAudioComponent* AudioComponent, bool ifAvailable)
 {
-	/* Be sure to check for a valid sound & audio component */
 	if (AudioComponent->IsValidLowLevel() && Sound != nullptr && Sound->IsValidLowLevel())
 	{
 		/* Audio Component is busy, cancel new sound play */
@@ -471,7 +357,6 @@ void AThingsInWoodsCharacter::execPlaySound(USoundBase* Sound, UAudioComponent* 
 			return;
 		}
 
-		/* prepare audio component & play */
 		AudioComponent->SetSound(Sound);
 		AudioComponent->Play();
 	}
@@ -484,7 +369,6 @@ bool AThingsInWoodsCharacter::PlaySound_Validate(USoundBase* Sound, UAudioCompon
 
 void AThingsInWoodsCharacter::PlaySound_Implementation(USoundBase* Sound, UAudioComponent* AudioComponent, bool ifAvailable)
 {
-	/* Client */
 	if (!HasAuthority())
 	{
 		/* execute clientside first */
@@ -532,11 +416,6 @@ void AThingsInWoodsCharacter::Multi_PlaySound_Implementation(USoundBase* Sound, 
 	this->execPlaySound(Sound, AudioComponent, ifAvailable);
 }
 
-/* ------------------------------------------
-* GetGroundSoundStack
-@Param EPhysicalSurface PhysSurface - ENum Physical Surface Type based on Physical Material
-* Returns the ground sound stack for the physsurface
-*/
 FGroundSounds* AThingsInWoodsCharacter::GetGroundSoundStack(EPhysicalSurface PhysSurface)
 {
 	switch (PhysSurface)
@@ -569,11 +448,6 @@ FGroundSounds* AThingsInWoodsCharacter::GetGroundSoundStack(EPhysicalSurface Phy
 	return this->GetGroundSounds()->GetDefault();
 }
 
-/* ------------------------------------------
-* GetSound_Jump
-@Param EPhysicalSurface PhysSurface - ENum Physical Surface Type based on Physical Material 
-* Returns the jump sound for a specific physical material
-*/
 USoundBase* AThingsInWoodsCharacter::GetSound_Jump(EPhysicalSurface PhysSurface)
 {
 	FGroundSounds* SoundStack = this->GetGroundSoundStack(PhysSurface);
@@ -581,11 +455,6 @@ USoundBase* AThingsInWoodsCharacter::GetSound_Jump(EPhysicalSurface PhysSurface)
 	return SoundStack->Jump_Start;
 }
 
-/* ------------------------------------------
-* GetSound_Landed
-@Param EPhysicalSurface PhysSurface - ENum Physical Surface Type based on Physical Material
-* Returns the landed sound for a specific physical material
-*/
 USoundBase* AThingsInWoodsCharacter::GetSound_Landed(EPhysicalSurface PhysSurface)
 {
 	FGroundSounds* SoundStack = this->GetGroundSoundStack(PhysSurface);
@@ -593,11 +462,6 @@ USoundBase* AThingsInWoodsCharacter::GetSound_Landed(EPhysicalSurface PhysSurfac
 	return SoundStack->Jump_Landing;
 }
 
-/* ------------------------------------------
-* GetSound_Step
-@Param EPhysicalSurface PhysSurface - ENum Physical Surface Type based on Physical Material
-* Returns the step sound for a specific physical material
-*/
 USoundBase* AThingsInWoodsCharacter::GetSound_Step(EPhysicalSurface PhysSurface)
 {
 	FGroundSounds* SoundStack = this->GetGroundSoundStack(PhysSurface);
@@ -605,11 +469,6 @@ USoundBase* AThingsInWoodsCharacter::GetSound_Step(EPhysicalSurface PhysSurface)
 	return SoundStack->Step;
 }
 
-/* ------------------------------------------
-* GetSound_Step_Run
-@Param EPhysicalSurface PhysSurface - ENum Physical Surface Type based on Physical Material
-* Returns the step running sound for a specific physical material
-*/
 USoundBase* AThingsInWoodsCharacter::GetSound_Step_Run(EPhysicalSurface PhysSurface)
 {
 	FGroundSounds* SoundStack = this->GetGroundSoundStack(PhysSurface);
@@ -617,13 +476,8 @@ USoundBase* AThingsInWoodsCharacter::GetSound_Step_Run(EPhysicalSurface PhysSurf
 	return SoundStack->Step_Run;
 }
 
-/* ------------------------------------------
-* PlaySound_Steps
-* Plays a footstep sound
-*/
 void AThingsInWoodsCharacter::PlaySound_Steps()
 {
-	/* Get the physical material below character to select correct landed sound and play it */
 	FHitResult GroundHit = this->GetGroundHit();
 
 	if (GroundHit.bBlockingHit && GroundHit.PhysMaterial->IsValidLowLevel())
@@ -646,17 +500,10 @@ void AThingsInWoodsCharacter::PlaySound_Steps()
 }
 
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Character stats related
-/* ------------------------------------------
-* GetIsInjured
-* Returns if the character health status counts as injured
-*/
-bool AThingsInWoodsCharacter::GetIsInjured()
+
+bool AThingsInWoodsCharacter::IsInjured()
 {
-	/* checks if health is below 50%, if yes, returns injured */
-	if ((100 / this->GetMaxHealth() * this->GetHealth()) <= 50) //todo: Set Injured percentage as variable
+	if ((100 / this->GetMaxHealth() * this->GetHealth()) <= 50)
 	{
 		return true;
 	}
@@ -664,48 +511,31 @@ bool AThingsInWoodsCharacter::GetIsInjured()
 	return false;
 }
 
-/* ------------------------------------------
-* Healh
-*@Param unsigned int iHealAmount - Amount of health to heal the character
-* Increases health / heals character
-*/
 void AThingsInWoodsCharacter::Heal(unsigned int iHealAmount)
 {
-	/* increases health */
 	this->SetHealth(this->GetHealth() + iHealAmount);
 
-	/* if the health is higher than allowed, set max health */
 	if (this->GetHealth() > this->GetMaxHealth())
 	{
 		this->SetHealth(this->GetMaxHealth());
 	}
 
-	/* Was the in blackout mode? */
 	if (this->GetIsBlackout())
 	{
 		this->SetIsBlackout(false); //todo: Add Toggle Blackout?
 	}
 }
 
-/* ------------------------------------------
-* ApplyDamage
-*@Param float fDamageAmount - Health points amount to reduce the characters health
-* Decreases health / deals damage with replicated damage indicator. Runs serverside.
-*/
 void AThingsInWoodsCharacter::execApplyDamage(float fDamageAmount)
 {
-	// Apply Damage
 	this->SetHealth(this->GetHealth() - fDamageAmount);
 
-	/* replicate damage indicator to all */
 	this->PlaySound(this->Pain, this->VoiceAudioComponent, true);
 
-	/* check for blackout */
-	if (this->GetHealth() <= 0)
+	if (this->GetHealth() <= 0.0f)
 	{
 		this->SetHealth(0.0f);
 
-		/* enable blackout mode if health is 0 */
 		this->EnableBlackout();
 	}
 }
@@ -735,11 +565,7 @@ void AThingsInWoodsCharacter::Server_ApplyDamage_Implementation(float fDamageAmo
 	this->execApplyDamage(fDamageAmount);
 }
 
-/* ------------------------------------------
-* Server_DeathHandle
-* Runs only serverside
-* Marks player as dead in playerstate and sets him as a spectator
-*/
+
 bool AThingsInWoodsCharacter::Server_DeathHandle_Validate()
 {
 	return true;
@@ -763,17 +589,8 @@ void AThingsInWoodsCharacter::Server_DeathHandle_Implementation()
 	}
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Unrelated stuff
-/* ------------------------------------------
-* SayHello
-*@Param AThingsInWoodsCharacter* PlayerCharacter - Other player character to register in the list
-* Registers another player character as an active player character
-*/
 void AThingsInWoodsCharacter::execSayHallo(AThingsInWoodsCharacter* PlayerCharacter)
 {
-	/* add to characters array */
 	this->ActivePlayers.AddUnique(PlayerCharacter);
 }
 
@@ -824,13 +641,7 @@ void AThingsInWoodsCharacter::Multi_SayHallo_Implementation(AThingsInWoodsCharac
 	this->execSayHallo(PlayerCharacter);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// TraceLine related
-/* ------------------------------------------
-* GetGroundHit
-* Casts a trace below the character to get a ground hit result
-*/
+
 FHitResult AThingsInWoodsCharacter::GetGroundHit()
 {
 	FVector EndVec = this->GetActorLocation() + (this->GetActorUpVector() * -100); //todo: replace -100 with capsule halfsize + buffer
@@ -838,13 +649,6 @@ FHitResult AThingsInWoodsCharacter::GetGroundHit()
 	return GroundHit;
 }
 
-/* ------------------------------------------
-* TraceLine
-* @Param FVector Start - Start position world space
-* @Param FVector End - End position world space
-* @Param bool Debug - Draw Debug Lines
-* Casts a trace line, returns hitresult
-*/
 FHitResult AThingsInWoodsCharacter::TraceLine(FVector Start, FVector End, bool Debug)
 {
 	//todo: rework function
@@ -886,28 +690,19 @@ FHitResult AThingsInWoodsCharacter::TraceLine(FVector Start, FVector End, bool D
 	return RV_Hit;
 }
 
-/* ------------------------------------------
-* BlackoutHandle
-* Handles the blackout value, executes character death if finished
-*/
 void AThingsInWoodsCharacter::execBlackoutHandle()
 {
-	/* only execute if character is in blackout mode */
 	if (this->GetIsBlackout())
 	{
-		/* check blackout timer to reduce performance hit */
+		/* todo: replace with delta timer */
 		if (GetGameTimeSinceCreation() >= this->GetBlackoutNextHitTime())
 		{
-			/* reduce Blackout percentage left */
 			this->SetBlackoutPercentage(this->GetBlackoutPercentage() - this->GetBlackoutFactor());
 
-			/* set the next blackout hit time */
 			this->SetBlackoutNextHitTime(GetGameTimeSinceCreation() + this->GetBlackoutHitTimeInSeconds());
 
-			/* check if blackout is ended, kill the character */
-			if (this->GetBlackoutPercentage() <= 0)
+			if (this->GetBlackoutPercentage() <= 0.0f)
 			{
-				/* kill the character */
 				this->SetIsAlive(false);
 				this->Server_DeathHandle();
 			}
@@ -939,13 +734,8 @@ void AThingsInWoodsCharacter::Server_BlackoutHandle_Implementation()
 	this->execBlackoutHandle();
 }
 
-/* ------------------------------------------
-* EnableBlackout
-* Activates the blackout modes, runs on owning client, server and replicated to all other clients
-*/
 void AThingsInWoodsCharacter::execEnableBlackout()
 {
-	/* only active if character is not in blackout mode */
 	if (!this->GetIsBlackout())
 	{
 		/* active blackout and init blackout settings */
@@ -1012,18 +802,8 @@ void AThingsInWoodsCharacter::Multi_EnableBlackout_Implementation()
 	this->execEnableBlackout();
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Inventory related
-/* ------------------------------------------
-* AddItemToInventory
-*@Param int iInventorySlot - Inventory Array Index to add an item to
-*@Param ABaseItem* Object - World Object reference to add to the inventory slot
-* Adds an world item into the inventory, sets inventory state to inventory picked up
-*/
 void AThingsInWoodsCharacter::AddItemToInventory(int iInventorySlot, ABaseItem* Object)
 {
-	/* Add Item To Array */
 	this->Inventory[iInventorySlot].Item.Add(Object);
 
 	/* Set Item Actor to picked up */
@@ -1031,11 +811,6 @@ void AThingsInWoodsCharacter::AddItemToInventory(int iInventorySlot, ABaseItem* 
 	Object->SetState(EObjectState::OS_STACKED); //todo: fix object states
 }
 
-/* ------------------------------------------
-* PickupObject
-*@Param ABaseItem* PickUpObject - World object reference to try to pickup
-* Pickup an world object to the inventory, check if its stackable or add a new one
-*/
 void AThingsInWoodsCharacter::execPickupObject(ABaseItem* PickUpObject)
 {
 	/* Check if the Item is stackable */
@@ -1151,10 +926,7 @@ void AThingsInWoodsCharacter::Multi_PickupObject_Implementation(ABaseItem* PickU
 	this->execPickupObject(PickUpObject);
 }
 
-/* ------------------------------------------
-* InventoryDrop
-* Drops the current selected inventory object to the world
-*/
+
 void AThingsInWoodsCharacter::execInventoryDrop()
 {
 	/* Check if an item is currently selected */
@@ -1166,20 +938,15 @@ void AThingsInWoodsCharacter::execInventoryDrop()
 	// Item Position + Camera Forwardvector * 100 - 100 Units infront of player
 	FVector DropLocation = this->FP_Gun->GetComponentLocation() + (this->FirstPersonCameraComponent->GetForwardVector() * 100); //todo: replace with traceline?
 	
-	/* be sure the item exist */
-	/* get a pointer to the selected item stack */
+
 	TArray<ABaseItem*>* InventoryStack = &this->Inventory[InventoryIndex].Item; //todo: check
 
-	/* stack amount */
 	int iInventoryItemStackSize = InventoryStack->Num();
 
-	/* only if one or more items are stored */
 	if (iInventoryItemStackSize > 0)
 	{
-		/* get a pointer to the first item in stack */
 		ABaseItem* InventoryItem = (*InventoryStack)[0];
 
-		/* item has to be valid */
 		if (InventoryItem->IsValidLowLevel())
 		{
 			/* Detach from player character */
@@ -1231,7 +998,6 @@ bool AThingsInWoodsCharacter::InventoryDrop_Validate()
 
 void AThingsInWoodsCharacter::InventoryDrop_Implementation()
 {
-	/* only execute if the character is alive and is not in blackout mode */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		//(Role > ROLE_Authority
@@ -1282,17 +1048,10 @@ void AThingsInWoodsCharacter::Multi_InventoryDrop_Implementation()
 	this->execInventoryDrop();
 }
 
-/* ------------------------------------------
-* InventorySelect
-*@Param int iInventoryIndex - Inventory Stack Index of the inventory TArray
-* Selects the item at the passed Inventory Stack Index and changes the item actor at FP / TP Demo Scene
-*/
 void AThingsInWoodsCharacter::execInventorySelect(int iInventoryIndex)
 {
-	/* Inventory index item to select */
 	if (iInventoryIndex != -1)
 	{
-		/* Get a pointer to the target inventory stack */
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryIndex].Item;
 
 		/* be sure the inventory stack is not empty, and it's not already selected */
@@ -1340,7 +1099,6 @@ bool AThingsInWoodsCharacter::InventorySelect_Validate(int iInventoryIndex)
 
 void AThingsInWoodsCharacter::InventorySelect_Implementation(int iInventoryIndex)
 {
-	/* only execute if the character is alive and is not in blackout mode */
 	if (this->GetIsAlive() && !this->GetIsBlackout())
 	{
 		/* client */
@@ -1391,10 +1149,6 @@ void AThingsInWoodsCharacter::Multi_InventorySelect_Implementation(int iInventor
 	this->execInventorySelect(iInventoryIndex);
 }
 
-/* ------------------------------------------
-* InventoryDeselect
-* Sets the current used item by player character to none
-*/
 void AThingsInWoodsCharacter::execInventoryDeselect()
 {
 	/* sets selected inventory stack to unused and resets animation */
@@ -1455,21 +1209,13 @@ void AThingsInWoodsCharacter::Multi_InventoryDeselect_Implementation()
 	this->execInventoryDeselect();
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Interactions / Use Object related
-/* ------------------------------------------
-* Primary()
-* Executes the primary usage mode of the selected item
-*/
 void AThingsInWoodsCharacter::execPrimary()
 {
-	/* Be sure selected object is valid */
 	int iInventoryStackIndex = this->GetInventorySelectedObject();
 	if (iInventoryStackIndex != -1)
 	{
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryStackIndex].Item;
-		/* InventoryStack has a stored item */
+		
 		if (InventoryStack->Num() > 0)
 		{
 			ABaseItem* TargetItem = (*InventoryStack)[0];
@@ -1602,21 +1348,15 @@ void AThingsInWoodsCharacter::Multi_Primary_Implementation()
 	this->execPrimary();
 }
 
-/* ------------------------------------------
-* StopPrimary()
-* Stops the primary object usage if the character is using an item over time
-*/
+
 void AThingsInWoodsCharacter::execStopPrimary()
 {
-	/* be sure player character is using an object over time */
 	if (this->GetIsUsingItem() && this->GetIsUsingOverTime() && this->GetIsUsingPrimary())
 	{
-		/* get the object currently in use */
 		int iInventoryStackIndex = this->GetInventorySelectedObject();
 		TArray<ABaseItem*>* Stack = &this->Inventory[iInventoryStackIndex].Item;
 		int iStackSize = Stack->Num();
 
-		/* check if inventory stack contains item and is valid */
 		if (iStackSize > 0)
 		{
 			ABaseItem* UseObject = (*Stack)[0];
@@ -1688,18 +1428,13 @@ void AThingsInWoodsCharacter::Multi_StopPrimary_Implementation()
 	this->execStopPrimary();
 }
 
-/* ------------------------------------------
-* Secondary()
-* Executes the secondary usage mode of the selected item
-*/
 void AThingsInWoodsCharacter::execSecondary()
 {
-	/* Be sure selected object is valid */
 	int iInventoryStackIndex = this->GetInventorySelectedObject();
 	if (iInventoryStackIndex != -1)
 	{
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryStackIndex].Item;
-		/* InventoryStack has a stored item */
+
 		if (InventoryStack->Num() > 0)
 		{
 			ABaseItem* TargetItem = (*InventoryStack)[0];
@@ -1832,21 +1567,14 @@ void AThingsInWoodsCharacter::Multi_Secondary_Implementation()
 	this->execSecondary();
 }
 
-/* ------------------------------------------
-* StopSecondary()
-* Stops the secondary object usage if the character is using an item over time
-*/
 void AThingsInWoodsCharacter::execStopSecondary()
 {
-	/* be sure player character is using an object secondary over time */
 	if (this->GetIsUsingItem() && this->GetIsUsingOverTime() && !this->GetIsUsingPrimary())
 	{
-		/* get the object currently in use */
 		int iInventoryStackIndex = this->GetInventorySelectedObject();
 		TArray<ABaseItem*>* Stack = &this->Inventory[iInventoryStackIndex].Item;
 		int iStackSize = Stack->Num();
 
-		/* check if inventory stack contains item and is valid */
 		if (iStackSize > 0)
 		{
 			ABaseItem* UseObject = (*Stack)[0];
@@ -1918,20 +1646,15 @@ void AThingsInWoodsCharacter::Multi_StopSecondary_Implementation()
 	this->execStopSecondary();
 }
 
-/* ------------------------------------------
-* ItemUsageHandle
-* Handles the item usage over time, executes the primary / secondary action if 100% is reached
-*/
+
 void AThingsInWoodsCharacter::execItemUsageHandle()
 {
 	/* be sure we're using an item and it's over time */
 	if (this->GetIsUsingItem() && this->GetIsUsingOverTime())
 	{
-		/* get the selected inventory stack */
 		int iUsedItemIndex = this->GetInventorySelectedObject();
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iUsedItemIndex].Item;
 
-		/* be sure the stack contains item(s) */
 		if (InventoryStack->Num() > 0)
 		{
 			/* get the first item and be sure it's valid */
@@ -2057,34 +1780,13 @@ void AThingsInWoodsCharacter::Multi_ItemUsageHandle_Implementation()
 	/* replicate to all clients and run on server */
 	this->execItemUsageHandle();
 }
-//------------------------------------------------------------------------
-//------------------- REDO FINISHED -----------------------------------
-//------------------- REDO FINISHED -----------------------------------
-//------------------- REDO FINISHED -----------------------------------
-//------------------- REDO FINISHED -----------------------------------
-//------------------- REDO FINISHED -----------------------------------
-//------------------------------------------------------------------------
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Inventory related
-//------------------------------------------------------------------------
 void AThingsInWoodsCharacter::UseUsageObject(ABaseItem* object)
 {
 	object->UseObject();
 }
 
-//------------------------------------------------------------------------
 
-//------------------------------------------------------------------------
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Interactions related // Item usage
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 void AThingsInWoodsCharacter::PlantObject()
 {
 	//todo

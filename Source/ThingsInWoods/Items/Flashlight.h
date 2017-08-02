@@ -15,12 +15,19 @@ class THINGSINWOODS_API AFlashlight : public ABaseItem
 
 		AFlashlight();
 	void BeginPlay() override;
+private:
+protected:
 
 public:
+	/** */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USpotLightComponent* FlashLight;
+
+	/** */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class UStaticMeshComponent* VolumetricLight;
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterialInstanceDynamic* FlashlightMaterialInstance;
 	//------------------------------------------------------------------------
@@ -28,8 +35,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Sounds)
 		class USoundBase* Toggle;
 	//------------------------------------------------------------------------
+
+	/** */
 	bool isOn;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float LightIntensity;
 

@@ -13,7 +13,9 @@ class THINGSINWOODS_API ANightvision : public ABaseItem
 {
 	GENERATED_BODY()
 	
-	
+private:
+protected:
+public:
 	
 	
 };

@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerState.h"
 #include "ThingsInWoodsPlayerState.generated.h"
 
+/** */
 UENUM(BlueprintType)
 enum class EPlayerMode : uint8
 {
@@ -26,14 +27,23 @@ public:
 	AThingsInWoodsPlayerState();
 	~AThingsInWoodsPlayerState();
 
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EPlayerMode PlayerMode;
+
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int	Points;
+
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int Blackouts;
+
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool wasAlive;
+
+	/** */
 	void SetState(EPlayerMode NewMode, bool wasAlive);
 };
 

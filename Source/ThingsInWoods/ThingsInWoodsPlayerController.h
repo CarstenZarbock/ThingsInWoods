@@ -19,17 +19,17 @@ class THINGSINWOODS_API AThingsInWoodsPlayerController : public APlayerControlle
 	GENERATED_BODY()
 public:
 	AThingsInWoodsPlayerController();
-		virtual void SetupInputComponent() override;
-		virtual void BeginPlay() override;
-		virtual void SetPawn(APawn* InPawn) override;
+	virtual void SetupInputComponent() override;
+	virtual void BeginPlay() override;
+	virtual void SetPawn(APawn* InPawn) override;
 
 protected:
-		/* Base Pawn */
-		UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	/** */
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 		AThingsInWoodsCharacter* APlayerPawn;
 		
-		/* Spectator Pawn */
-		UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	/** */
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 		AThingsInWoodsSpectator* ASpectatorPawnOR;
 
 public:
@@ -48,6 +48,8 @@ public:
 		void StopPrimary();
 		void Secondary();
 		void StopSecondary();
+
+		/** */
 		void ToggleNightVision();
 
 		/** Inventory Input */
@@ -68,8 +70,10 @@ public:
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 			float BaseLookUpRate;
 
+		/** */
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			float PickupDistance;
 
+		/** Helper function for raycast */
 		FHitResult TraceLine(FVector Start, FVector End, bool Debug);
 };

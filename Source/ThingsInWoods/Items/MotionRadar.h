@@ -15,15 +15,22 @@ class THINGSINWOODS_API AMotionRadar : public ABaseItem
 
 	AMotionRadar();
 	void BeginPlay() override;
+private:
+protected:
 
 public:
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float ScanTime;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float ScanDistance;
 
+	/** */
 	bool isScanning;
+
+	/** */
 	TArray<AActor*> Scan();
 
 	void CustomTick() override;
@@ -32,6 +39,9 @@ public:
 	void ActivateObject() override;
 	void DisableObject() override;
 
+	/** */
 	void Register();
+
+	/** */
 	void UnRegister();
 };

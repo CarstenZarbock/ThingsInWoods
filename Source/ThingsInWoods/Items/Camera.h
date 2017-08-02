@@ -12,19 +12,24 @@ UCLASS()
 class THINGSINWOODS_API ACamera : public ABaseItem
 {
 	GENERATED_BODY()
-		UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+private:
+	/** */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USceneCaptureComponent2D* SceneCapture;
 
+public:
 	ACamera();
 	void BeginPlay() override;
 
-public:
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterialInstanceDynamic* CameraMaterialInstance;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Materials)
 		UMaterial* CameraMaterial;
 
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UTextureRenderTarget2D* RenderTarget;
 
@@ -33,7 +38,10 @@ public:
 	void ActivateObject() override;
 	void DisableObject() override;
 
+	/** */
 	void Register();
+
+	/** */
 	void UnRegister();
 
 	/** Returns SceneCapture subobject **/
