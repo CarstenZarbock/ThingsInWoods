@@ -132,12 +132,12 @@ public:
 	bool isOwned;
 
 	/** */
-	UPROPERTY(ReplicatedUsing = OnRep_Flag)
+	UPROPERTY(ReplicatedUsing = OnRep_LastKnownTransform)
 		FTransform LastKnownTransform;
 
 	/** */
 	UFUNCTION()
-		void OnRep_Flag();
+		void OnRep_LastKnownTransform();
 
 	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

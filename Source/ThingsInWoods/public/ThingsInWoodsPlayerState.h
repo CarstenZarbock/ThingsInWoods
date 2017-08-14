@@ -41,7 +41,7 @@ public:
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool wasAlive;
+		bool bWasAlive;
 
 	/** */
 	void SetState(EPlayerMode NewMode, bool wasAlive);

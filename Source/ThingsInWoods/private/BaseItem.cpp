@@ -42,7 +42,7 @@ void ABaseItem::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLife
 	DOREPLIFETIME(ABaseItem, LastKnownTransform);
 }
 
-void ABaseItem::OnRep_Flag()
+void ABaseItem::OnRep_LastKnownTransform()
 {
 	if (this->ObjectState == EObjectState::OS_WORLD)
 	{
