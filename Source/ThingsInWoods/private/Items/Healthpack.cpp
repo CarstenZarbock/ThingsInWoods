@@ -12,7 +12,7 @@ AHealthpack::AHealthpack()
 void AHealthpack::execPrimary()
 {
 	AThingsInWoodsCharacter* PlayerPawn = Cast<AThingsInWoodsCharacter>(this->GetOwner());
-	PlayerPawn->GetActionTarget()->Heal(20);
+	PlayerPawn->AActionTarget->Heal(20);
 }
 
 void AHealthpack::execSecondary()

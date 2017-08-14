@@ -46,7 +46,7 @@ struct FUsage
 {
 	GENERATED_BODY()
 
-private:
+public:
 	/** */
 	UPROPERTY(EditDefaultsOnly)
 		EUsageTarget ETargetType;
@@ -62,7 +62,7 @@ private:
 	/** */
 	UPROPERTY(EditDefaultsOnly)
 		float fTimeFactor;
-public:
+
 	FUsage() { /* be sure to set in default */ }
 };
 

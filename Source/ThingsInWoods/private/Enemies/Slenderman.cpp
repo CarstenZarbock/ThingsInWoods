@@ -44,7 +44,7 @@ void ASlenderman::GetAllActivePlayers()
 	for (TActorIterator<AThingsInWoodsCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		AThingsInWoodsCharacter* PlayerCharacter = *ActorItr;
-		if (PlayerCharacter != nullptr && PlayerCharacter->GetIsAlive())
+		if (PlayerCharacter != nullptr && PlayerCharacter->IsAlive())
 		{
 			ActivePlayers.Add(PlayerCharacter);
 		}
@@ -107,7 +107,7 @@ void ASlenderman::CheckForPlayerAngles(float DeltaTime)
 	{
 		if (ActivePlayers[i]->IsValidLowLevel())
 		{
-			if (ActivePlayers[i]->GetIsAlive())
+			if (ActivePlayers[i]->IsAlive())
 			{
 				FVector VecA, VecB;
 				VecA = this->GetActorLocation() - ActivePlayers[i]->GetActorLocation();

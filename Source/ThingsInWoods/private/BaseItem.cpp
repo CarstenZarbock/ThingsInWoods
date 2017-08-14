@@ -44,7 +44,7 @@ void ABaseItem::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLife
 
 void ABaseItem::OnRep_Flag()
 {
-	if (this->GetObjectState() == EObjectState::OS_WORLD)
+	if (this->ObjectState == EObjectState::OS_WORLD)
 	{
 		if (this->GetMesh()->IsSimulatingPhysics())
 		{
@@ -58,7 +58,7 @@ void ABaseItem::HandlePhysicPositionCheck()
 {
 	if (HasAuthority())
 	{
-		if (this->GetObjectState() == EObjectState::OS_WORLD)
+		if (this->ObjectState == EObjectState::OS_WORLD)
 		{
 			if (this->GetMesh()->IsSimulatingPhysics())
 			{
@@ -173,7 +173,7 @@ void ABaseItem::execSecondary()
 
 void ABaseItem::Primary()
 {
-	if (this->GetPrimarySkill()->GetIsOverTime())
+	if (this->FPrimarySkill.bIsOverTime)
 	{
 		this->isCurrentlyUsed = true;
 		this->isPrimaryUsed = true;
@@ -193,7 +193,7 @@ void ABaseItem::StopPrimary()
 
 void ABaseItem::Secondary()
 {
-	if (this->GetSecondarySkill()->GetIsOverTime())
+	if (this->FSecondarySkill.bIsOverTime)
 	{
 		this->isCurrentlyUsed = true;
 		this->isPrimaryUsed = false;
@@ -219,10 +219,10 @@ void ABaseItem::HandleUsage()
 		{
 			if (this->isPrimaryUsed)
 			{
-				this->currentUsageProgression += this->GetPrimarySkill()->GetTimeFactor();
+				this->currentUsageProgression += this->FPrimarySkill.fTimeFactor;
 			}else
 			{
-				this->currentUsageProgression += this->GetSecondarySkill()->GetTimeFactor();
+				this->currentUsageProgression += this->FSecondarySkill.fTimeFactor;
 			}
 
 			this->NextUsageHitTime = GetGameTimeSinceCreation() + 0.1f;

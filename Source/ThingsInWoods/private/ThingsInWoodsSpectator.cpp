@@ -47,7 +47,7 @@ void AThingsInWoodsSpectator::AttachToPlayerPawn(APawn* Pawn)
 	if (Pawn != nullptr && Pawn->IsValidLowLevel())
 	{
 		this->AttachToActor(Pawn, FAttachmentTransformRules::KeepRelativeTransform);
-		this->SetAttachedPawn(Pawn);
+		this->AAttachedPawn = Pawn;
 	}
 }
 
@@ -57,13 +57,13 @@ APawn* AThingsInWoodsSpectator::GetNextPlayer()
 	for (TActorIterator<AThingsInWoodsCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		AThingsInWoodsCharacter* OtherCharacter = *ActorItr;
-		if (OtherCharacter->IsValidLowLevel() && OtherCharacter->GetIsAlive())
+		if (OtherCharacter->IsValidLowLevel() && OtherCharacter->IsAlive())
 		{
 			this->AttachToPlayerPawn(OtherCharacter);
-			return this->GetAttachedPawn();
+			return this->AAttachedPawn;
 		}
 	}
 
-	this->SetAttachedPawn(nullptr);
+	this->AAttachedPawn = nullptr;
 	return nullptr;
 }

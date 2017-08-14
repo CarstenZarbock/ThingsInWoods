@@ -40,7 +40,7 @@ void AThingsInWoodsPlayerController::SetPawn(APawn* InPawn)
 	
 	if (Cast<AThingsInWoodsCharacter>(InPawn) != nullptr)
 	{
-		this->SetPlayerPawn(Cast<AThingsInWoodsCharacter>(InPawn));
+		this->APlayerPawn = Cast<AThingsInWoodsCharacter>(InPawn);
 		this->SetSpectatorPawn(nullptr);
 		return;
 	}
@@ -48,7 +48,7 @@ void AThingsInWoodsPlayerController::SetPawn(APawn* InPawn)
 	if (Cast<AThingsInWoodsSpectator>(InPawn) != nullptr)
 	{
 		this->SetSpectatorPawn(Cast<AThingsInWoodsSpectator>(InPawn));
-		this->SetPlayerPawn(nullptr);
+		this->APlayerPawn = nullptr;
 		return;
 	}
 }
@@ -101,9 +101,9 @@ void AThingsInWoodsPlayerController::SetupInputComponent()
 */
 void AThingsInWoodsPlayerController::Inventory_Drop()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->InventoryDrop();
+		this->APlayerPawn->InventoryDrop();
 	}
 }
 
@@ -113,9 +113,9 @@ void AThingsInWoodsPlayerController::Inventory_Drop()
 */
 void AThingsInWoodsPlayerController::Inventory_Select(int index)
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->InventorySelect(index);
+		this->APlayerPawn->InventorySelect(index);
 	}
 }
 
@@ -125,15 +125,15 @@ void AThingsInWoodsPlayerController::Inventory_Select(int index)
 */
 void AThingsInWoodsPlayerController::Jump()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->HandleJump();
+		this->APlayerPawn->HandleJump();
 		return;
 	}
 
-	if (this->GetSpectatorPawn() != nullptr && this->GetSpectatorPawn()->IsValidLowLevel())
+	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel())
 	{
-		AThingsInWoodsCharacter* ANewPlayerCharacter = Cast<AThingsInWoodsCharacter>(this->GetSpectatorPawn()->GetNextPlayer());
+		AThingsInWoodsCharacter* ANewPlayerCharacter = Cast<AThingsInWoodsCharacter>(this->ASpectatorPawnOR->GetNextPlayer());
 
 		if (ANewPlayerCharacter != nullptr && ANewPlayerCharacter->IsValidLowLevel())
 		{
@@ -153,9 +153,9 @@ void AThingsInWoodsPlayerController::Jump()
 */
 void AThingsInWoodsPlayerController::StopJump()
 {	
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->HandleStopJump();
+		this->APlayerPawn->HandleStopJump();
 	}
 }
 
@@ -165,9 +165,9 @@ void AThingsInWoodsPlayerController::StopJump()
 */
 void AThingsInWoodsPlayerController::Sprint()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->RunToggle(true);
+		this->APlayerPawn->RunToggle(true);
 	}
 }
 
@@ -177,9 +177,9 @@ void AThingsInWoodsPlayerController::Sprint()
 */
 void AThingsInWoodsPlayerController::StopSprint()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->RunToggle(false);
+		this->APlayerPawn->RunToggle(false);
 	}
 }
 
@@ -190,10 +190,10 @@ void AThingsInWoodsPlayerController::StopSprint()
 */
 void AThingsInWoodsPlayerController::MoveForward(float fRate)
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
 		/* Add Movement to the direction */
-		this->GetPlayerPawn()->HandleMovement(GetActorForwardVector(), fRate);
+		this->APlayerPawn->HandleMovement(GetActorForwardVector(), fRate);
 	}
 }
 
@@ -204,10 +204,10 @@ void AThingsInWoodsPlayerController::MoveForward(float fRate)
 */
 void AThingsInWoodsPlayerController::MoveRight(float fRate)
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
 		/* Add Movement to the direction */
-		this->GetPlayerPawn()->HandleMovement(GetActorRightVector(), fRate);
+		this->APlayerPawn->HandleMovement(GetActorRightVector(), fRate);
 	}
 }
 
@@ -218,16 +218,16 @@ void AThingsInWoodsPlayerController::MoveRight(float fRate)
 */
 void AThingsInWoodsPlayerController::TurnAtRate(float fRate)
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
 		/* Add Rotation */
-		this->GetPlayerPawn()->HandleTurnRotation(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+		this->APlayerPawn->HandleTurnRotation(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 		return;
 	}
 
-	if (this->GetSpectatorPawn() != nullptr && this->GetSpectatorPawn()->IsValidLowLevel()) //todo: Own Function?
+	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel()) //todo: Own Function?
 	{
-		this->GetSpectatorPawn()->AddControllerYawInput(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+		this->ASpectatorPawnOR->AddControllerYawInput(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 		return;
 	}
 }
@@ -239,16 +239,16 @@ void AThingsInWoodsPlayerController::TurnAtRate(float fRate)
 */
 void AThingsInWoodsPlayerController::LookUpAtRate(float Rate)
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
 		/* Add Rotation */
-		this->GetPlayerPawn()->HandleUpRotation(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+		this->APlayerPawn->HandleUpRotation(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 		return;
 	}
 
-	if (this->GetSpectatorPawn() != nullptr && this->GetSpectatorPawn()->IsValidLowLevel()) //todo: Own Function?
+	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel()) //todo: Own Function?
 	{
-		this->GetSpectatorPawn()->AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+		this->ASpectatorPawnOR->AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 		return;
 	}
 }
@@ -259,9 +259,9 @@ void AThingsInWoodsPlayerController::LookUpAtRate(float Rate)
 */
 void AThingsInWoodsPlayerController::Use()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->HandleUseInput();
+		this->APlayerPawn->HandleUseInput();
 	}
 }
 
@@ -280,9 +280,9 @@ void AThingsInWoodsPlayerController::StopUse()
 */
 void AThingsInWoodsPlayerController::Primary()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->Primary();
+		this->APlayerPawn->Primary();
 	}
 }
 
@@ -292,9 +292,9 @@ void AThingsInWoodsPlayerController::Primary()
 */
 void AThingsInWoodsPlayerController::StopPrimary()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->StopPrimary();
+		this->APlayerPawn->StopPrimary();
 	}
 }
 
@@ -304,9 +304,9 @@ void AThingsInWoodsPlayerController::StopPrimary()
 */
 void AThingsInWoodsPlayerController::Secondary()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->Secondary();
+		this->APlayerPawn->Secondary();
 	}
 }
 
@@ -316,9 +316,9 @@ void AThingsInWoodsPlayerController::Secondary()
 */
 void AThingsInWoodsPlayerController::StopSecondary()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->StopSecondary();
+		this->APlayerPawn->StopSecondary();
 	}
 }
 
@@ -328,9 +328,9 @@ void AThingsInWoodsPlayerController::StopSecondary()
 */
 void AThingsInWoodsPlayerController::ToggleNightVision()
 {
-	if (this->GetPlayerPawn() != nullptr && this->GetPlayerPawn()->IsValidLowLevel())
+	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
 	{
-		this->GetPlayerPawn()->ToggleNightVision();
+		this->APlayerPawn->ToggleNightVision();
 	}
 }
 //------------------------------------------------------------------------
