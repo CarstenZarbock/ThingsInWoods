@@ -3,7 +3,7 @@
 #include "ThingsInWoods.h"
 #include "ThingsInWoodsSpectator.h"
 #include "ThingsInWoodsCharacter.h"
-
+#include "Engine.h"
 
 AThingsInWoodsSpectator::AThingsInWoodsSpectator()
 {
@@ -33,7 +33,6 @@ AThingsInWoodsSpectator::AThingsInWoodsSpectator()
 
 void AThingsInWoodsSpectator::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 }
 
@@ -42,28 +41,26 @@ void AThingsInWoodsSpectator::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AThingsInWoodsSpectator::AttachToPlayerPawn(APawn* Pawn)
+void AThingsInWoodsSpectator::AttachToPlayerPawn(AThingsInWoodsCharacter* Pawn)
 {
 	if (Pawn != nullptr && Pawn->IsValidLowLevel())
 	{
 		this->AttachToActor(Pawn, FAttachmentTransformRules::KeepRelativeTransform);
-		this->AAttachedPawn = Pawn;
+		this->AttachedPawn = Pawn;
 	}
 }
 
-APawn* AThingsInWoodsSpectator::GetNextPlayer()
+AThingsInWoodsCharacter* AThingsInWoodsSpectator::GetNextPlayer()
 {
-	//Get all characters
+	//Get all player characters
 	for (TActorIterator<AThingsInWoodsCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		AThingsInWoodsCharacter* OtherCharacter = *ActorItr;
-		if (OtherCharacter->IsValidLowLevel() && OtherCharacter->IsAlive())
+		if (OtherCharacter->IsValidLowLevel() && OtherCharacter->IsAlive() && OtherCharacter != this->AttachedPawn)
 		{
-			this->AttachToPlayerPawn(OtherCharacter);
-			return this->AAttachedPawn;
+			return OtherCharacter;
 		}
 	}
 
-	this->AAttachedPawn = nullptr;
 	return nullptr;
 }

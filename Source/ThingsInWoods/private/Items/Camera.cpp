@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "MonitorCamera.h"
 #include "ThingsInWoodsCharacter.h"
+#include "Engine.h"
 
 
 ACamera::ACamera()

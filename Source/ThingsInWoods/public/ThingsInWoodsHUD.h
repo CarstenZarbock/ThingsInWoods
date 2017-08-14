@@ -1,8 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once 
 #include "GameFramework/HUD.h"
-#include "ThingsInWoodsCharacter.h"
-#include "Engine.h"
 #include "ThingsInWoodsHUD.generated.h"
 
 UCLASS()
@@ -14,7 +12,7 @@ public:
 	AThingsInWoodsHUD();
 
 	/** */
-	AThingsInWoodsCharacter* PlayerPawn;
+	class AThingsInWoodsCharacter* PlayerPawn;
 
 	/** Primary draw call for the HUD */
 	virtual void DrawHUD() override;

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/SpectatorPawn.h"
-#include "Engine.h"
 #include "ThingsInWoodsSpectator.generated.h"
 
 /**
@@ -18,14 +17,14 @@ class THINGSINWOODS_API AThingsInWoodsSpectator : public ASpectatorPawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringarmComponent;
 	
-	/** First person camera */
+	/**  */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FirstPersonCameraComponent;
 private:
 
 protected:
 	/** */
-	APawn* AAttachedPawn;
+	class AThingsInWoodsCharacter* AttachedPawn;
 
 public: 
 	AThingsInWoodsSpectator();
@@ -33,10 +32,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	/** */
-	void AttachToPlayerPawn(APawn* Pawn);
+	void AttachToPlayerPawn(class AThingsInWoodsCharacter* Pawn);
 
 	/** */
-	APawn* GetNextPlayer();
+	class AThingsInWoodsCharacter* GetNextPlayer();
 	
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 };

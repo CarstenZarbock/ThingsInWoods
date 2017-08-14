@@ -1,9 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
-#include "Engine.h"
 #include "BaseItem.h"
-#include "ThingsInWoodsSpectator.h"
 #include "ThingsInWoodsCharacter.generated.h"
 
 /** */

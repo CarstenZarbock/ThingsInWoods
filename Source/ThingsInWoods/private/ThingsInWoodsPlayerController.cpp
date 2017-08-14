@@ -115,12 +115,15 @@ void AThingsInWoodsPlayerController::Jump()
 	} else if (bSpectatorPossessed)
 	{
 		//Switch spectating to next player
-		AThingsInWoodsCharacter* ANewPlayerCharacter = Cast<AThingsInWoodsCharacter>(this->PossessedSpectatorPawn->GetNextPlayer());
+		AThingsInWoodsCharacter* ANewPlayerCharacter = this->PossessedSpectatorPawn->GetNextPlayer();
 
 		if (ANewPlayerCharacter != nullptr)
 		{
-			AThingsInWoodsHUD* HUD = Cast<AThingsInWoodsHUD>(this->GetHUD());
+			//Attach spectator to new player character
+			this->PossessedSpectatorPawn->AttachToPlayerPawn(ANewPlayerCharacter);
 
+			//Switch HUD to new player character infos
+			AThingsInWoodsHUD* HUD = Cast<AThingsInWoodsHUD>(this->GetHUD());
 			if (HUD != nullptr)
 			{
 				HUD->PlayerPawn = ANewPlayerCharacter;

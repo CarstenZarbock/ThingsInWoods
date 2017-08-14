@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Character.h"
-#include "ThingsInWoodsCharacter.h"
 #include "Slenderman.generated.h"
 
 UCLASS()
@@ -60,7 +59,7 @@ public:
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<AThingsInWoodsCharacter*>ActivePlayers;	
+		TArray<class AThingsInWoodsCharacter*>ActivePlayers;	
 
 	/** */
 	UFUNCTION(BlueprintCallable, Category = "Stats")

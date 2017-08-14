@@ -7,9 +7,10 @@
 #include "Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "MotionControllerComponent.h"
 #include "Engine.h"
-#include "Items/Nightvision.h" /* TODO: FIX NIGHTVISION */
+#include "Items/Nightvision.h" //needs to be fixed
 #include "UnrealNetwork.h"
 #include "ThingsInWoodsPlayerState.h"
+#include "ThingsInWoodsSpectator.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 

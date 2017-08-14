@@ -5,6 +5,8 @@
 #include "Engine/Canvas.h"
 #include "TextureResource.h"
 #include "CanvasItem.h"
+#include "ThingsInWoodsCharacter.h"
+#include "Engine.h"
 
 AThingsInWoodsHUD::AThingsInWoodsHUD()
 {

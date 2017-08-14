@@ -2,6 +2,8 @@
 
 #include "ThingsInWoods.h"
 #include "Slenderman.h"
+#include "ThingsInWoodsCharacter.h"
+#include "Engine.h"
 
 // Sets default values
 ASlenderman::ASlenderman()
