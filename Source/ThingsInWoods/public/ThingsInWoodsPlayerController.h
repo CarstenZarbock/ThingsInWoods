@@ -3,11 +3,6 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "ThingsInWoodsCharacter.h"
-#include "ThingsInWoodsSpectator.h"
-#include "ThingsInWoodsPlayerState.h"
-#include "ThingsInWoodsHUD.h"
-#include "BaseItem.h"
 #include "ThingsInWoodsPlayerController.generated.h"
 
 /**
@@ -26,11 +21,14 @@ public:
 protected:
 	/** */
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
-		AThingsInWoodsCharacter* APlayerPawn;
+		class AThingsInWoodsCharacter* PossessedPlayerPawn;
 		
 	/** */
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
-		AThingsInWoodsSpectator* ASpectatorPawnOR;
+		class AThingsInWoodsSpectator* PossessedSpectatorPawn;
+
+	bool bPawnPossessed;
+	bool bSpectatorPossessed;
 
 public:
 		/* Input */

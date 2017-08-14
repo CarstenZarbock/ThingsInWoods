@@ -3,6 +3,10 @@
 #include "ThingsInWoods.h"
 #include "ThingsInWoodsPlayerController.h"
 #include "UnrealNetwork.h"
+#include "ThingsInWoodsCharacter.h"
+#include "ThingsInWoodsSpectator.h"
+#include "ThingsInWoodsPlayerState.h"
+#include "ThingsInWoodsHUD.h"
 
 AThingsInWoodsPlayerController::AThingsInWoodsPlayerController()
 {
@@ -13,34 +17,28 @@ void AThingsInWoodsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	/* set the turn rates */
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 }
 
-/* ------------------------------------------
- replicated variables
-*/
 void AThingsInWoodsPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AThingsInWoodsPlayerController, APlayerPawn);
-	DOREPLIFETIME(AThingsInWoodsPlayerController, ASpectatorPawnOR);
+	DOREPLIFETIME(AThingsInWoodsPlayerController, PossessedPlayerPawn);
+	DOREPLIFETIME(AThingsInWoodsPlayerController, PossessedSpectatorPawn);
 }
 
-/* ------------------------------------------
-* SetPawn()
-*@Param APawn* InPawn
-*Super::SetPawn - Gets executed if a controller possessing a pawn
-*/
 void AThingsInWoodsPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 	
 	if (Cast<AThingsInWoodsCharacter>(InPawn) != nullptr)
 	{
-		this->APlayerPawn = Cast<AThingsInWoodsCharacter>(InPawn);
+		this->PossessedPlayerPawn = Cast<AThingsInWoodsCharacter>(InPawn);
+		this->bPawnPossessed = true;
+
+		this->bSpectatorPossessed = false;
 		this->SetSpectatorPawn(nullptr);
 		return;
 	}
@@ -48,13 +46,13 @@ void AThingsInWoodsPlayerController::SetPawn(APawn* InPawn)
 	if (Cast<AThingsInWoodsSpectator>(InPawn) != nullptr)
 	{
 		this->SetSpectatorPawn(Cast<AThingsInWoodsSpectator>(InPawn));
-		this->APlayerPawn = nullptr;
+		this->bPawnPossessed = false;
+
+		this->bSpectatorPossessed = true;
+		this->PossessedPlayerPawn = nullptr;
 		return;
 	}
 }
-
-//////////////////////////////////////////////////////////////////////////
-// Input
 
 void AThingsInWoodsPlayerController::SetupInputComponent()
 {
@@ -92,50 +90,34 @@ void AThingsInWoodsPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Inventory_Drop", IE_Pressed, this, &AThingsInWoodsPlayerController::Inventory_Drop);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// Input Interactions / Use Object related
-/* ------------------------------------------
-* Inventory_Drop()
-* Executes the InventoryDrop function
-*/
 void AThingsInWoodsPlayerController::Inventory_Drop()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->InventoryDrop();
+		this->PossessedPlayerPawn->InventoryDrop();
 	}
 }
 
-/* ------------------------------------------
-* Inventory_Select()
-* Executes the InventorySelect based on input key index function
-*/
 void AThingsInWoodsPlayerController::Inventory_Select(int index)
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->InventorySelect(index);
+		this->PossessedPlayerPawn->InventorySelect(index);
 	}
 }
 
-/* ------------------------------------------
-* Jump()
-* Executes the Jump input, Jump if a Character is active, Select Next Player if Spectator Mode
-*/
 void AThingsInWoodsPlayerController::Jump()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->HandleJump();
-		return;
-	}
+		this->PossessedPlayerPawn->HandleJump();
 
-	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel())
+	} else if (bSpectatorPossessed)
 	{
-		AThingsInWoodsCharacter* ANewPlayerCharacter = Cast<AThingsInWoodsCharacter>(this->ASpectatorPawnOR->GetNextPlayer());
+		//Switch spectating to next player
+		AThingsInWoodsCharacter* ANewPlayerCharacter = Cast<AThingsInWoodsCharacter>(this->PossessedSpectatorPawn->GetNextPlayer());
 
-		if (ANewPlayerCharacter != nullptr && ANewPlayerCharacter->IsValidLowLevel())
+		if (ANewPlayerCharacter != nullptr)
 		{
 			AThingsInWoodsHUD* HUD = Cast<AThingsInWoodsHUD>(this->GetHUD());
 
@@ -147,190 +129,119 @@ void AThingsInWoodsPlayerController::Jump()
 	}
 }
 
-/* ------------------------------------------
-* StopJump()
-* Executes the StopJump() when JumpKey is released
-*/
 void AThingsInWoodsPlayerController::StopJump()
 {	
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->HandleStopJump();
+		this->PossessedPlayerPawn->HandleStopJump();
 	}
 }
 
-/* ------------------------------------------
-* Sprint()
-* Executes the Run Toggle when Sprint Input Key is pressed
-*/
 void AThingsInWoodsPlayerController::Sprint()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->RunToggle(true);
+		this->PossessedPlayerPawn->RunToggle(true);
 	}
 }
 
-/* ------------------------------------------
-* StopSprint()
-* Executes the Run Toggle when Sprint Input Key is released
-*/
 void AThingsInWoodsPlayerController::StopSprint()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->RunToggle(false);
+		this->PossessedPlayerPawn->RunToggle(false);
 	}
 }
 
-/* ------------------------------------------
-* MoveForward()
-*@Param float fRate - Input Rate of the Key Axis Value
-*Executes Forwards / Backwards walking
-*/
 void AThingsInWoodsPlayerController::MoveForward(float fRate)
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		/* Add Movement to the direction */
-		this->APlayerPawn->HandleMovement(GetActorForwardVector(), fRate);
+		this->PossessedPlayerPawn->HandleMovement(GetActorForwardVector(), fRate);
 	}
 }
 
-/* ------------------------------------------
-* MoveRight()
-*@Param float fRate - Input Rate of the Key Axis Value
-*Executes Right / Left walking
-*/
 void AThingsInWoodsPlayerController::MoveRight(float fRate)
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		/* Add Movement to the direction */
-		this->APlayerPawn->HandleMovement(GetActorRightVector(), fRate);
+		this->PossessedPlayerPawn->HandleMovement(GetActorRightVector(), fRate);
 	}
 }
 
-/* ------------------------------------------
-* TurnAtRate()
-*@Param float fRate - Input Rate of the Key Axis Value
-*Executes a side Turn
-*/
 void AThingsInWoodsPlayerController::TurnAtRate(float fRate)
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		/* Add Rotation */
-		this->APlayerPawn->HandleTurnRotation(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-		return;
-	}
+		this->PossessedPlayerPawn->HandleTurnRotation(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 
-	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel()) //todo: Own Function?
+	} else if (bSpectatorPossessed)
 	{
-		this->ASpectatorPawnOR->AddControllerYawInput(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-		return;
+		this->PossessedSpectatorPawn->AddControllerYawInput(fRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 	}
 }
 
-/* ------------------------------------------
-* LookUpAtRate()
-*@Param float fRate - Input Rate of the Key Axis Value
-*Executes a lookUp / lookDown turn
-*/
 void AThingsInWoodsPlayerController::LookUpAtRate(float Rate)
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		/* Add Rotation */
-		this->APlayerPawn->HandleUpRotation(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-		return;
-	}
+		this->PossessedPlayerPawn->HandleUpRotation(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 
-	if (this->ASpectatorPawnOR != nullptr && this->ASpectatorPawnOR->IsValidLowLevel()) //todo: Own Function?
+	} else if (bSpectatorPossessed)
 	{
-		this->ASpectatorPawnOR->AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-		return;
+		this->PossessedSpectatorPawn->AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 	}
 }
 
-/* ------------------------------------------
-* Use()
-*Executes a use function if input key is pressed
-*/
 void AThingsInWoodsPlayerController::Use()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->HandleUseInput();
+		this->PossessedPlayerPawn->HandleUseInput();
 	}
 }
 
-/* ------------------------------------------
-* StopUse()
-*Executes a stopuse function if input key is released
-*/
 void AThingsInWoodsPlayerController::StopUse()
 {
 
 }
 
-/* ------------------------------------------
-* Primary()
-*Executes a primary function if primary key is pressed
-*/
 void AThingsInWoodsPlayerController::Primary()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->Primary();
+		this->PossessedPlayerPawn->Primary();
 	}
 }
 
-/* ------------------------------------------
-* StopPrimary()
-*Executes a stop primary function if primary key is released
-*/
 void AThingsInWoodsPlayerController::StopPrimary()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->StopPrimary();
+		this->PossessedPlayerPawn->StopPrimary();
 	}
 }
 
-/* ------------------------------------------
-* Secondary()
-*Executes a secondary function if secondary key is pressed
-*/
 void AThingsInWoodsPlayerController::Secondary()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->Secondary();
+		this->PossessedPlayerPawn->Secondary();
 	}
 }
 
-/* ------------------------------------------
-* StopSecondary()
-*Executes a secondary function if secondary key is released
-*/
 void AThingsInWoodsPlayerController::StopSecondary()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->StopSecondary();
+		this->PossessedPlayerPawn->StopSecondary();
 	}
 }
 
-/* ------------------------------------------
-* ToggleNightVision()
-*Executes the Night Vision Toggle if Night Vision Hotkey input key is pressed
-*/
 void AThingsInWoodsPlayerController::ToggleNightVision()
 {
-	if (this->APlayerPawn != nullptr && this->APlayerPawn->IsValidLowLevel())
+	if (bPawnPossessed)
 	{
-		this->APlayerPawn->ToggleNightVision();
+		this->PossessedPlayerPawn->ToggleNightVision();
 	}
 }
-//------------------------------------------------------------------------
