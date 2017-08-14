@@ -147,6 +147,9 @@ public:
 	FHitResult GetGroundHit();
 
 	/** */
+	FGroundSounds* GetGroundSoundStack(EPhysicalSurface PhysSurface);
+
+	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Sounds)
 		class USoundBase* Pain;
 
@@ -254,9 +257,6 @@ public:
 			float fUsingPercentage;
 
 		/** */
-		AThingsInWoodsCharacter* AActionTarget;
-
-		/** */
 		UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Stats)
 			bool bIsBlackout;
 
@@ -336,7 +336,7 @@ public:
 	//------------------------------------------------------------------------
 	/** */
 	bool IsInjured();
-
+	bool IsAlive() const { return this->bIsAlive; }
 	/** */
 	void Heal(unsigned int iHealAmount);
 
@@ -642,6 +642,9 @@ public:
 	
 	/** */
 	void UseUsageObject(ABaseItem* object);
+
+	/** Shouldn't be public. */
+	AThingsInWoodsCharacter* AActionTarget;
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

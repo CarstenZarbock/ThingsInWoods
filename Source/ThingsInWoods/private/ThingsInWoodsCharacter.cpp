@@ -114,12 +114,12 @@ void AThingsInWoodsCharacter::BeginPlay()
 	/* We hide the hands mesh - as long as it's the default one */
 	//Mesh1P->SetHiddenInGame(true, false);
 
-	this->SetInventorySelectedObject(-1);
-	this->SetHealth(this->GetMaxHealth());
-	this->SetIsAlive(true);
-	this->SetStamina(this->GetMaxStamina());
-	this->SetNextStaminaHitTime(0);
-	this->SetIsRunning(false);
+	this->iInventorySelectedObject = -1;
+	this->fHealth = this->fHealthMax;
+	this->bIsAlive = true;
+	this->iStamina = this->iStaminaMax;
+	this->fNextStaminaHitTime = 0;
+	this->bIsRunning = false;
 
 	/* We register our characters to the other players */
 	this->SayHallo();
@@ -130,7 +130,7 @@ void AThingsInWoodsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (this->GetIsAlive())
+	if (this->bIsAlive)
 	{
 		this->BlackoutHandle();
 		this->ItemUsageHandle();
@@ -143,11 +143,11 @@ void AThingsInWoodsCharacter::Tick(float DeltaTime)
 
 void AThingsInWoodsCharacter::HandleUseInput()
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		//Re-initialize hit info
 		FHitResult RV_Hit(ForceInit);
-		RV_Hit = TraceLine((this->GetFirstPersonCameraComponent()->GetForwardVector() * 100) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), (this->GetFirstPersonCameraComponent()->GetForwardVector() * this->GetPickupDistance()) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), true);
+		RV_Hit = TraceLine((this->GetFirstPersonCameraComponent()->GetForwardVector() * 100) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), (this->GetFirstPersonCameraComponent()->GetForwardVector() * this->fPickupDistance) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), true);
 
 		if (RV_Hit.GetActor() != NULL)
 		{
@@ -175,7 +175,7 @@ void AThingsInWoodsCharacter::HandleUseInput()
 
 void AThingsInWoodsCharacter::HandleMovement(FVector WorldDirection, float ScaleValue)
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
+	if (this->bIsAlive && !this->bIsBlackout && this->CanMove())
 	{
 		this->AddMovementInput(WorldDirection, ScaleValue);
 
@@ -188,7 +188,7 @@ void AThingsInWoodsCharacter::HandleMovement(FVector WorldDirection, float Scale
 
 void AThingsInWoodsCharacter::HandleTurnRotation(float fRate)
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		this->AddControllerYawInput(fRate);
 	}
@@ -196,7 +196,7 @@ void AThingsInWoodsCharacter::HandleTurnRotation(float fRate)
 
 void AThingsInWoodsCharacter::HandleUpRotation(float fRate)
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		this->AddControllerPitchInput(fRate);
 	}
@@ -216,7 +216,7 @@ void AThingsInWoodsCharacter::Landed(const FHitResult & Hit)
 
 void AThingsInWoodsCharacter::HandleJump()
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
+	if (this->bIsAlive && !this->bIsBlackout && this->CanMove())
 	{
 		if (this->GetMovementComponent()->IsMovingOnGround())
 		{
@@ -234,7 +234,7 @@ void AThingsInWoodsCharacter::HandleJump()
 
 void AThingsInWoodsCharacter::HandleStopJump()
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		this->StopJumping();
 	}
@@ -242,7 +242,7 @@ void AThingsInWoodsCharacter::HandleStopJump()
 
 bool AThingsInWoodsCharacter::CanMove()
 {
-	if (this->GetIsUsingItem() && this->GetIsUsingOverTime())
+	if (this->bIsUsingItem && this->bIsUsingOverTime)
 	{
 		return false;
 	}
@@ -257,32 +257,32 @@ void AThingsInWoodsCharacter::SetMaximumWalkSpeed(float fNewMaximumWalkSpeed)
 
 void AThingsInWoodsCharacter::execRunToggle(bool bNewIsRunning)
 {
-	if (this->GetIsRunning() && this->GetStamina() >= this->GetMinimumStaminaToRun())
+	if (this->bIsRunning && this->iStamina >= this->fMinimumStaminaToRun)
 	{
 		/* slow down if injured */
-		if (this->GetIsInjured())
+		if (this->IsInjured())
 		{
-			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeedRunningInjured());
+			this->SetMaximumWalkSpeed(this->fMaxWalkSpeedRunningInjured);
 		}
 		else
 		{
-			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeedRunning());
+			this->SetMaximumWalkSpeed(this->fMaxWalkSpeedRunning);
 		}
 
-		this->SetIsRunning(true);
+		this->bIsRunning = true;
 	}
 	else /* character is not running or too low on stamina */
 	{
-		if (this->GetIsInjured())
+		if (this->IsInjured())
 		{
-			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeedInjured());
+			this->SetMaximumWalkSpeed(this->fMaxWalkSpeedInjured);
 		}
 		else
 		{
-			this->SetMaximumWalkSpeed(this->GetMaxWalkSpeed());
+			this->SetMaximumWalkSpeed(this->fMaxWalkSpeed);
 		}
 
-		this->SetIsRunning(false);
+		this->bIsRunning = false;
 	}
 }
 
@@ -293,7 +293,7 @@ bool AThingsInWoodsCharacter::RunToggle_Validate(bool bNewIsRunning)
 
 void AThingsInWoodsCharacter::RunToggle_Implementation(bool bNewIsRunning)
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout() && this->CanMove())
+	if (this->bIsAlive && !this->bIsBlackout && this->CanMove())
 	{
 		/* executes local */
 		this->execRunToggle(bNewIsRunning);
@@ -320,29 +320,31 @@ void AThingsInWoodsCharacter::Server_RunToggle_Implementation(bool bNewIsRunning
 void AThingsInWoodsCharacter::StaminaHandle()
 {
 	/* replace time with delta time timer */
-	if (GetGameTimeSinceCreation() >= this->GetNextStaminaHitTime())
+	if (GetGameTimeSinceCreation() >= this->fNextStaminaHitTime)
 	{
-		if (this->GetIsRunning())
+		if (this->bIsRunning)
 		{
-			if (this->SetStamina(this->GetStamina() - this->GetStaminaReducementFactor()) <= 0)
+			this->iStamina -= this->fStaminaReducementFactor;
+			if (this->iStamina <= 0)
 			{
 				/* Stamina is 0 or below, disable running */
-				this->SetStamina(0);
+				this->iStamina = 0;
 				this->RunToggle(false);
 			}
 
 			/* Set the next "Hit" time based on the reducement timer */
-			this->SetNextStaminaHitTime(GetGameTimeSinceCreation() + this->GetStaminaHitTime());
+			this->fNextStaminaHitTime = GetGameTimeSinceCreation() + this->fStaminaHitTime;
 		}
 		else /* while walking / standing gain stamina */
 		{
-			if (this->SetStamina(this->GetStamina() + this->GetStaminaGainFactor()) > this->GetMaxStamina())
+			this->iStamina += this->fStaminaGainTime;
+			if (this->iStamina > this->iStaminaMax)
 			{
-				this->SetStamina(this->GetMaxStamina());
+				this->iStamina = this->iStamina;
 			}
 
 			/* Set the next "Hit" time based on the gain timer */
-			this->SetNextStaminaHitTime(GetGameTimeSinceCreation() + this->GetStaminaGainTime());
+			this->fNextStaminaHitTime= GetGameTimeSinceCreation() + this->fStaminaGainTime;
 		}
 	}
 }
@@ -421,31 +423,31 @@ FGroundSounds* AThingsInWoodsCharacter::GetGroundSoundStack(EPhysicalSurface Phy
 	switch (PhysSurface)
 	{
 	case SurfaceType_Default:
-		return this->GetGroundSounds()->GetDefault();
+		return this->FSounds_Ground.GetDefault();
 		break;
 	case SurfaceType1: //Grass
-		return this->GetGroundSounds()->GetGrass();
+		return this->FSounds_Ground.GetGrass();
 		break;
 	case SurfaceType2: //Dirt
-		return this->GetGroundSounds()->GetDirt();
+		return this->FSounds_Ground.GetDirt();
 		break;
 	case SurfaceType3: //Metal
-		return this->GetGroundSounds()->GetMetal();
+		return this->FSounds_Ground.GetMetal();
 		break;
 	case SurfaceType4: //Wood
-		return this->GetGroundSounds()->GetWood();
+		return this->FSounds_Ground.GetWood();
 		break;
 	case SurfaceType5: //Stone
-		return this->GetGroundSounds()->GetStone();
+		return this->FSounds_Ground.GetStone();
 		break;
 	case SurfaceType6: //Water
-		return this->GetGroundSounds()->GetWater();
+		return this->FSounds_Ground.GetWater();
 		break;
 	default:
 		break;
 	}
 
-	return this->GetGroundSounds()->GetDefault();
+	return this->FSounds_Ground.GetDefault();
 }
 
 USoundBase* AThingsInWoodsCharacter::GetSound_Jump(EPhysicalSurface PhysSurface)
@@ -485,7 +487,7 @@ void AThingsInWoodsCharacter::PlaySound_Steps()
 		USoundBase* StepSound = nullptr;
 
 		/* play different sound on running / walking */
-		if (!this->GetIsRunning())
+		if (!this->bIsRunning)
 		{
 			StepSound = this->GetSound_Step(GroundHit.PhysMaterial->SurfaceType);
 		}
@@ -503,7 +505,7 @@ void AThingsInWoodsCharacter::PlaySound_Steps()
 
 bool AThingsInWoodsCharacter::IsInjured()
 {
-	if ((100 / this->GetMaxHealth() * this->GetHealth()) <= 50)
+	if ((100 / this->fHealthMax * this->fHealth) <= 50)
 	{
 		return true;
 	}
@@ -513,28 +515,28 @@ bool AThingsInWoodsCharacter::IsInjured()
 
 void AThingsInWoodsCharacter::Heal(unsigned int iHealAmount)
 {
-	this->SetHealth(this->GetHealth() + iHealAmount);
+	this->fHealth += iHealAmount;
 
-	if (this->GetHealth() > this->GetMaxHealth())
+	if (this->fHealth > this->fHealthMax)
 	{
-		this->SetHealth(this->GetMaxHealth());
+		this->fHealth = this->fHealthMax;
 	}
 
-	if (this->GetIsBlackout())
+	if (this->bIsBlackout)
 	{
-		this->SetIsBlackout(false); //todo: Add Toggle Blackout?
+		this->bIsBlackout = false; //todo: Add Toggle Blackout?
 	}
 }
 
 void AThingsInWoodsCharacter::execApplyDamage(float fDamageAmount)
 {
-	this->SetHealth(this->GetHealth() - fDamageAmount);
+	this->fHealth -= fDamageAmount;
 
 	this->PlaySound(this->Pain, this->VoiceAudioComponent, true);
 
-	if (this->GetHealth() <= 0.0f)
+	if (this->fHealth <= 0.0f)
 	{
-		this->SetHealth(0.0f);
+		this->fHealth = 0.0f;
 
 		this->EnableBlackout();
 	}
@@ -692,18 +694,18 @@ FHitResult AThingsInWoodsCharacter::TraceLine(FVector Start, FVector End, bool D
 
 void AThingsInWoodsCharacter::execBlackoutHandle()
 {
-	if (this->GetIsBlackout())
+	if (this->bIsBlackout)
 	{
 		/* todo: replace with delta timer */
-		if (GetGameTimeSinceCreation() >= this->GetBlackoutNextHitTime())
+		if (GetGameTimeSinceCreation() >= this->fBlackoutNextHitTime)
 		{
-			this->SetBlackoutPercentage(this->GetBlackoutPercentage() - this->GetBlackoutFactor());
+			this->fBlackoutPercentage -= this->fBlackoutFactor;
 
-			this->SetBlackoutNextHitTime(GetGameTimeSinceCreation() + this->GetBlackoutHitTimeInSeconds());
+			this->fBlackoutNextHitTime = GetGameTimeSinceCreation() + this->fBlackoutHitTimeInSeconds;
 
-			if (this->GetBlackoutPercentage() <= 0.0f)
+			if (this->fBlackoutPercentage <= 0.0f)
 			{
-				this->SetIsAlive(false);
+				this->bIsAlive = false;
 				this->Server_DeathHandle();
 			}
 		}
@@ -736,12 +738,12 @@ void AThingsInWoodsCharacter::Server_BlackoutHandle_Implementation()
 
 void AThingsInWoodsCharacter::execEnableBlackout()
 {
-	if (!this->GetIsBlackout())
+	if (!this->bIsBlackout)
 	{
 		/* active blackout and init blackout settings */
-		this->SetIsBlackout(true);
-		this->SetBlackoutPercentage(100.0f);
-		this->SetBlackoutNextHitTime(GetGameTimeSinceCreation() + this->GetBlackoutHitTimeInSeconds());
+		this->bIsBlackout = true;
+		this->fBlackoutPercentage = 100.0f;
+		this->fBlackoutNextHitTime = GetGameTimeSinceCreation() + this->fBlackoutHitTimeInSeconds;
 
 		/* only play sound clientside, do not replicate */
 		this->execPlaySound(this->Death, this->VoiceAudioComponent, false);
@@ -831,13 +833,13 @@ void AThingsInWoodsCharacter::execPickupObject(ABaseItem* PickUpObject)
 			if (InventorySlotItem->IsValidLowLevel() && InventorySlotItem->GetClass() == PickUpObject->GetClass())
 			{
 				/* Stackable and Stack Amount is below stack amount limit */
-				if (InventorySlotItem->GetIsStackable() && iItemSlotSize < InventorySlotItem->GetStackSize())
+				if (InventorySlotItem->bIsStackable && iItemSlotSize < InventorySlotItem->iStackSize)
 				{
 					/* Add Item to Inventory */
 					this->AddItemToInventory(i, PickUpObject);
 
 					/* select item if player does not have an active item */
-					if (this->GetInventorySelectedObject() == -1)
+					if (this->iInventorySelectedObject == -1)
 					{
 						this->InventorySelect(i);
 					}
@@ -858,7 +860,7 @@ void AThingsInWoodsCharacter::execPickupObject(ABaseItem* PickUpObject)
 			this->AddItemToInventory(i, PickUpObject);
 
 			/* select item if player character has not an active item */
-			if (this->GetInventorySelectedObject() == -1)
+			if (this->iInventorySelectedObject == -1)
 			{
 				this->InventorySelect(i);
 			}
@@ -930,7 +932,7 @@ void AThingsInWoodsCharacter::Multi_PickupObject_Implementation(ABaseItem* PickU
 void AThingsInWoodsCharacter::execInventoryDrop()
 {
 	/* Check if an item is currently selected */
-	int InventoryIndex = this->GetInventorySelectedObject();
+	int InventoryIndex = this->iInventorySelectedObject;
 	if (InventoryIndex == -1) { return; }
 
 	/* Drop Object */
@@ -957,7 +959,7 @@ void AThingsInWoodsCharacter::execInventoryDrop()
 
 			/* remove from inventory */
 			/* is stackable? */
-			if (InventoryItem->GetIsStackable())
+			if (InventoryItem->bIsStackable)
 			{
 				/* only remove one instance of the item */
 				InventoryStack->RemoveSingle(InventoryItem);
@@ -998,7 +1000,7 @@ bool AThingsInWoodsCharacter::InventoryDrop_Validate()
 
 void AThingsInWoodsCharacter::InventoryDrop_Implementation()
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		//(Role > ROLE_Authority
 		/* owning client */
@@ -1055,13 +1057,13 @@ void AThingsInWoodsCharacter::execInventorySelect(int iInventoryIndex)
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryIndex].Item;
 
 		/* be sure the inventory stack is not empty, and it's not already selected */
-		if (InventoryStack->Num() > 0 && this->GetInventorySelectedObject() != iInventoryIndex)
+		if (InventoryStack->Num() > 0 && this->iInventorySelectedObject != iInventoryIndex)
 		{
 			/* Select the new item - first item of the stack */
 			ABaseItem* TargetItem = (*InventoryStack)[0];
 			if (TargetItem->IsValidLowLevel())
 			{
-				this->SetInventorySelectedObject(iInventoryIndex);
+				this->iInventorySelectedObject = iInventoryIndex;
 
 				/* Attach actor to FP_Gun Demo Scene and apply visibility settings */
 				TargetItem->AttachToComponent(this->FP_Gun, FAttachmentTransformRules::SnapToTargetIncludingScale);
@@ -1073,7 +1075,7 @@ void AThingsInWoodsCharacter::execInventorySelect(int iInventoryIndex)
 				TargetItem->SetState(EObjectState::OS_INVENTORY);
 
 				/* set current carry animation type */
-				this->SetCurrentAnimationType(TargetItem->GetAnimationType());
+				this->ECurrentAnimationType = TargetItem->EAnimationTypeCurrent;
 			}
 		}
 	}
@@ -1099,7 +1101,7 @@ bool AThingsInWoodsCharacter::InventorySelect_Validate(int iInventoryIndex)
 
 void AThingsInWoodsCharacter::InventorySelect_Implementation(int iInventoryIndex)
 {
-	if (this->GetIsAlive() && !this->GetIsBlackout())
+	if (this->bIsAlive && !this->bIsBlackout)
 	{
 		/* client */
 		if (!HasAuthority())
@@ -1152,8 +1154,8 @@ void AThingsInWoodsCharacter::Multi_InventorySelect_Implementation(int iInventor
 void AThingsInWoodsCharacter::execInventoryDeselect()
 {
 	/* sets selected inventory stack to unused and resets animation */
-	this->SetInventorySelectedObject(-1);
-	this->SetCurrentAnimationType(EAnimationType::AS_NORMAL);
+	this->iInventorySelectedObject = -1;
+	this->ECurrentAnimationType = EAnimationType::AS_NORMAL;
 }
 
 bool AThingsInWoodsCharacter::InventoryDeselect_Validate()
@@ -1211,7 +1213,7 @@ void AThingsInWoodsCharacter::Multi_InventoryDeselect_Implementation()
 
 void AThingsInWoodsCharacter::execPrimary()
 {
-	int iInventoryStackIndex = this->GetInventorySelectedObject();
+	int iInventoryStackIndex = this->iInventorySelectedObject;
 	if (iInventoryStackIndex != -1)
 	{
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryStackIndex].Item;
@@ -1224,10 +1226,10 @@ void AThingsInWoodsCharacter::execPrimary()
 				bool bIsUsable = false;
 				FHitResult RV_Hit(ForceInit);
 				float TargetDistance;
-				FUsage* TargetSkill = TargetItem->GetPrimarySkill();
+				FUsage* TargetSkill = &TargetItem->FPrimarySkill;
 
 				/* Check the item target type and if it's usable on the target */
-				switch (TargetSkill->GetTargetType())
+				switch (TargetSkill->ETargetType)
 				{
 					//---------------------------------------------------------------------------
 				case EUsageTarget::UT_NONE: /* item doesn't require a target */
@@ -1238,7 +1240,7 @@ void AThingsInWoodsCharacter::execPrimary()
 											  //todo: create a seperate function
 
 											  /* get the max target distance to use the item */
-					TargetDistance = TargetSkill->GetMaximumTargetDistance();
+					TargetDistance = TargetSkill->fTargetDistanceMax;
 
 					/* cast a traceline and check if hit actor is a valid target */
 					RV_Hit = TraceLine((this->GetFirstPersonCameraComponent()->GetForwardVector() * 100) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), (this->GetFirstPersonCameraComponent()->GetForwardVector() * TargetDistance) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), true);
@@ -1254,7 +1256,7 @@ void AThingsInWoodsCharacter::execPrimary()
 							if (TargetItem->checkPrimary()) //todo: Add player target actor reference
 							{
 								/* player character is a valid target, set as action target and enable usage */
-								this->SetActionTarget(TargetCharacter);
+								this->AActionTarget = TargetCharacter;
 								bIsUsable = true;
 							}
 						}
@@ -1275,7 +1277,7 @@ void AThingsInWoodsCharacter::execPrimary()
 				if (bIsUsable)
 				{
 					/* check if the action is instant or requires time */
-					if (TargetSkill->GetIsOverTime())
+					if (TargetSkill->bIsOverTime)
 					{
 						/* over time use (e.g. healing) - execute instant */
 						TargetItem->Primary();
@@ -1284,10 +1286,10 @@ void AThingsInWoodsCharacter::execPrimary()
 					{
 						/* instant use (e.g. rifle shot) - enable use over time */
 						TargetItem->Primary();
-						this->SetIsUsingItem(true);
-						this->SetIsUsingOverTime(true);
-						this->SetIsUsingPrimary(true);
-						this->SetUsingPercentage(0.0f); // set use percentage to zero
+						this->bIsUsingItem = true;
+						this->bIsUsingOverTime = true;
+						this->bIsUsingPrimary = true;
+						this->fUsingPercentage = 0.0f; // set use percentage to zero
 					}
 				}
 			}
@@ -1351,9 +1353,9 @@ void AThingsInWoodsCharacter::Multi_Primary_Implementation()
 
 void AThingsInWoodsCharacter::execStopPrimary()
 {
-	if (this->GetIsUsingItem() && this->GetIsUsingOverTime() && this->GetIsUsingPrimary())
+	if (this->bIsUsingItem && this->bIsUsingOverTime && this->bIsUsingPrimary)
 	{
-		int iInventoryStackIndex = this->GetInventorySelectedObject();
+		int iInventoryStackIndex = this->iInventorySelectedObject;
 		TArray<ABaseItem*>* Stack = &this->Inventory[iInventoryStackIndex].Item;
 		int iStackSize = Stack->Num();
 
@@ -1368,9 +1370,9 @@ void AThingsInWoodsCharacter::execStopPrimary()
 			}
 
 			/* stop usage on character */
-			this->SetIsUsingItem(false);
-			this->SetIsUsingOverTime(false);
-			this->SetUsingPercentage(0.0f);
+			this->bIsUsingItem = false;
+			this->bIsUsingOverTime = false;
+			this->fUsingPercentage = 0.0f;
 		}
 	}
 }
@@ -1430,7 +1432,7 @@ void AThingsInWoodsCharacter::Multi_StopPrimary_Implementation()
 
 void AThingsInWoodsCharacter::execSecondary()
 {
-	int iInventoryStackIndex = this->GetInventorySelectedObject();
+	int iInventoryStackIndex = this->iInventorySelectedObject;
 	if (iInventoryStackIndex != -1)
 	{
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iInventoryStackIndex].Item;
@@ -1443,10 +1445,10 @@ void AThingsInWoodsCharacter::execSecondary()
 				bool bIsUsable = false;
 				float TargetDistance;
 				FHitResult RV_Hit(ForceInit);
-				FUsage* TargetSkill = TargetItem->GetSecondarySkill();
+				FUsage* TargetSkill = &TargetItem->FSecondarySkill;
 
 				/* Check the item target type and if it's usable on the target */
-				switch (TargetSkill->GetTargetType())
+				switch (TargetSkill->ETargetType)
 				{
 					//---------------------------------------------------------------------------
 				case EUsageTarget::UT_NONE: /* item doesn't require a target */
@@ -1457,7 +1459,7 @@ void AThingsInWoodsCharacter::execSecondary()
 											  //todo: create a seperate function
 
 											  /* get the max target distance to use the item */
-					TargetDistance = TargetSkill->GetMaximumTargetDistance();
+					TargetDistance = TargetSkill->fTargetDistanceMax;
 
 					/* cast a traceline and check if hit actor is a valid target */
 					RV_Hit = TraceLine((this->GetFirstPersonCameraComponent()->GetForwardVector() * 100) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), (this->GetFirstPersonCameraComponent()->GetForwardVector() * TargetDistance) + this->GetFirstPersonCameraComponent()->GetComponentLocation(), true);
@@ -1473,7 +1475,7 @@ void AThingsInWoodsCharacter::execSecondary()
 							if (TargetItem->checkSecondary()) //todo: Add player target actor reference
 							{
 								/* player character is a valid target, set as action target and enable usage */
-								this->SetActionTarget(TargetCharacter);
+								this->AActionTarget = TargetCharacter;
 								bIsUsable = true;
 							}
 						}
@@ -1494,7 +1496,7 @@ void AThingsInWoodsCharacter::execSecondary()
 				if (bIsUsable)
 				{
 					/* check if the action is instant or requires time */
-					if (TargetSkill->GetIsOverTime())
+					if (TargetSkill->bIsOverTime)
 					{
 						/* over time use (e.g. healing) - execute instant */
 						TargetItem->Secondary();
@@ -1503,10 +1505,10 @@ void AThingsInWoodsCharacter::execSecondary()
 					{
 						/* instant use (e.g. rifle shot) - enable use over time */
 						TargetItem->Secondary();
-						this->SetIsUsingItem(true);
-						this->SetIsUsingOverTime(true);
-						this->SetIsUsingPrimary(false);
-						this->SetUsingPercentage(0.0f); // set use percentage to zero
+						this->bIsUsingItem = true;
+						this->bIsUsingOverTime = true;
+						this->bIsUsingPrimary = false;
+						this->fUsingPercentage = 0.0f; // set use percentage to zero
 					}
 				}
 			}
@@ -1569,9 +1571,9 @@ void AThingsInWoodsCharacter::Multi_Secondary_Implementation()
 
 void AThingsInWoodsCharacter::execStopSecondary()
 {
-	if (this->GetIsUsingItem() && this->GetIsUsingOverTime() && !this->GetIsUsingPrimary())
+	if (this->bIsUsingItem && this->bIsUsingOverTime && !this->bIsUsingPrimary)
 	{
-		int iInventoryStackIndex = this->GetInventorySelectedObject();
+		int iInventoryStackIndex = this->iInventorySelectedObject;
 		TArray<ABaseItem*>* Stack = &this->Inventory[iInventoryStackIndex].Item;
 		int iStackSize = Stack->Num();
 
@@ -1586,9 +1588,9 @@ void AThingsInWoodsCharacter::execStopSecondary()
 			}
 
 			/* stop usage on character */
-			this->SetIsUsingItem(false);
-			this->SetIsUsingOverTime(false);
-			this->SetUsingPercentage(0.0f);
+			this->bIsUsingItem = false;
+			this->bIsUsingOverTime = false;
+			this->fUsingPercentage = 0.0f;
 		}
 	}
 }
@@ -1650,9 +1652,9 @@ void AThingsInWoodsCharacter::Multi_StopSecondary_Implementation()
 void AThingsInWoodsCharacter::execItemUsageHandle()
 {
 	/* be sure we're using an item and it's over time */
-	if (this->GetIsUsingItem() && this->GetIsUsingOverTime())
+	if (this->bIsUsingItem && this->bIsUsingOverTime)
 	{
-		int iUsedItemIndex = this->GetInventorySelectedObject();
+		int iUsedItemIndex = this->iInventorySelectedObject;
 		TArray<ABaseItem*>* InventoryStack = &this->Inventory[iUsedItemIndex].Item;
 
 		if (InventoryStack->Num() > 0)
@@ -1662,21 +1664,21 @@ void AThingsInWoodsCharacter::execItemUsageHandle()
 			if (TargetItem->IsValidLowLevel())
 			{
 				/* set the character using percentage */
-				this->SetUsingPercentage(TargetItem->GetUsageProgression());
+				this->fUsingPercentage = TargetItem->currentUsageProgression;
 
 				bool bIsUsable = false;
 				EUsageTarget EUseTarget;
 				float fRequiredDistance;
 
 				/* Get the Target Type NONE / OTHER PLAYER / IN WORLD */
-				if (this->GetIsUsingPrimary())
+				if (this->bIsUsingPrimary)
 				{
-					EUseTarget = TargetItem->GetPrimarySkill()->GetTargetType();
-					fRequiredDistance = TargetItem->GetPrimarySkill()->GetMaximumTargetDistance();
+					EUseTarget = TargetItem->FPrimarySkill.ETargetType;
+					fRequiredDistance = TargetItem->FPrimarySkill.fTargetDistanceMax;
 				}
 				else {
-					EUseTarget = TargetItem->GetSecondarySkill()->GetTargetType();
-					fRequiredDistance = TargetItem->GetSecondarySkill()->GetMaximumTargetDistance();
+					EUseTarget = TargetItem->FSecondarySkill.ETargetType;
+					fRequiredDistance = TargetItem->FSecondarySkill.fTargetDistanceMax;
 				}
 
 				//Todo: See Primary / Secondary, replace
@@ -1687,11 +1689,11 @@ void AThingsInWoodsCharacter::execItemUsageHandle()
 					bIsUsable = true;
 					break;
 				case EUsageTarget::UT_PLAYER: /* only other player as target */
-					if (this->GetActionTarget()->IsValidLowLevel())
+					if (this->AActionTarget->IsValidLowLevel())
 					{
 						/* currently only calculate the distance between player character and other character */
 						//todo: probably raycast
-						if (this->GetDistanceTo(this->GetActionTarget()) <= fRequiredDistance)
+						if (this->GetDistanceTo(this->AActionTarget) <= fRequiredDistance)
 						{
 							bIsUsable = true;
 						}
@@ -1707,10 +1709,10 @@ void AThingsInWoodsCharacter::execItemUsageHandle()
 				if (bIsUsable)
 				{
 					/* is item ready to use - on 100% */
-					if (this->GetUsingPercentage() >= 100.0f)
+					if (this->fUsingPercentage >= 100.0f)
 					{
 						/* execute primary / secondary */
-						if (this->GetIsUsingPrimary())
+						if (this->bIsUsingPrimary)
 						{
 							TargetItem->execPrimary(); //todo: probably replace because replication
 							this->StopPrimary();
@@ -1726,7 +1728,7 @@ void AThingsInWoodsCharacter::execItemUsageHandle()
 				else /* target requirements are not met, cancel the action */
 				{
 					//Lets Cancel
-					if (this->GetIsUsingPrimary())
+					if (this->bIsUsingPrimary)
 					{
 						this->StopPrimary();  //todo: probably replace because replication
 					}
